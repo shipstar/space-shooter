@@ -1,47 +1,34 @@
 body {
-	background-color: #fff;
-	font-family: 'Trebuchet MS', 'Helvetica Neue', Arial, Sans-serif;
-	color: #222;
-}
+  background-color: white;
+  font-family: "Trebuchet MS", "Helvetica Neue", Arial, Sans-serif;
+  color: #222222; }
 
 h1 {
-	font-weight: bold; 	
-	padding: 10px;
-	padding-bottom: 0px;
-	margin-bottom: 2px;
-	text-align: center;
-	font-size: 32px;
-}
+  font-weight: bold;
+  padding: 10px;
+  padding-bottom: 0px;
+  margin-bottom: 2px;
+  text-align: center;
+  font-size: 32px; }
 
 a, a:active, a:visited {
-	color: #222;
-}
+  color: #222222; }
 
 a:hover {
-	color: #a00;
-}
-
-#ribbon {
-	position: absolute;
-	top: 0;
-	right: 0;
-	border: 0;
-}
+  color: #aa0000; }
 
 #scoreboard {
   text-align: center;
   padding: 0;
-  padding-bottom: 12px;
-}
+  padding-bottom: 12px; }
 
 #stage {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-}
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px dotted #333333; }
 
 p {
-	text-align: center;
-	font-weight: normal;
-	font-size: 11px;
-}
+  text-align: center;
+  font-weight: normal;
+  font-size: 11px; }
