@@ -1,0 +1,1 @@
+coffee -wc -o compiled/ src/*.coffee
