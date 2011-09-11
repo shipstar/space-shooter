@@ -1,0 +1,8 @@
+{
+	"name":         "space-shooter",
+	"version":			"0.0.1",
+  "dependencies": {
+    "coffee-script": ">= 1.0.1",
+    "socket.io": "= 0.6.18"
+  }
+}
