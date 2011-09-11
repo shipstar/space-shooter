@@ -22,7 +22,7 @@ a:hover {
   padding: 0;
   padding-bottom: 12px; }
 
-#stage {
+#canvas {
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -32,3 +32,6 @@ p {
   text-align: center;
   font-weight: normal;
   font-size: 11px; }
+
+.red {
+  background-color: red; }
