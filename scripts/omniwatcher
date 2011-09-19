@@ -1,0 +1,3 @@
+#!/bin/sh
+./scripts/coffee-watcher
+./scripts/sass-watcher
