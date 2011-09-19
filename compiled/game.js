@@ -71,9 +71,13 @@
     };
     updateShip = function(event) {
       if (event.which === $.ui.keyCode.LEFT) {
-        return ship.x -= ship.movementInterval;
+        if (ship.x > 0) {
+          return ship.x -= ship.movementInterval;
+        }
       } else if (event.which === $.ui.keyCode.RIGHT) {
-        return ship.x += ship.movementInterval;
+        if ((ship.x + ship.width) < canvas.width()) {
+          return ship.x += ship.movementInterval;
+        }
       } else if (event.which === $.ui.keyCode.SPACE) {
         return bullets.push({
           width: 2,

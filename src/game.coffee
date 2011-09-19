@@ -44,9 +44,9 @@ $ ->
 
   updateShip = (event) ->
     if event.which == $.ui.keyCode.LEFT
-      ship.x -= ship.movementInterval
+      ship.x -= ship.movementInterval if ship.x > 0
     else if event.which == $.ui.keyCode.RIGHT
-      ship.x += ship.movementInterval
+      ship.x += ship.movementInterval if (ship.x + ship.width) < canvas.width()
     else if event.which == $.ui.keyCode.SPACE
       bullets.push { width: 2, height: 2, x: ship.x + ship.width / 2, y: ship.y - 1, velocity: -15 }
 
