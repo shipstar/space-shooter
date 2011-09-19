@@ -18,12 +18,12 @@ $ ->
 
   drawShip = (ship) ->
     canvas.get(0).getContext("2d").fillRect(ship.x, ship.y, ship.width, ship.height)
-    canvas.get(0).getContext("2d").fillRect(ship.x + ship.width / 2 - 1, ship.y - 4, 2, 4) 
-  
+    canvas.get(0).getContext("2d").fillRect(ship.x + ship.width / 2 - 1, ship.y - 4, 2, 4)
+
   updateBullets = (bullets) ->
     for bullet in bullets
       bullet.y += bullet.velocity
-    
+
     bullets = (bullet for bullet in bullets when bullet.y > 0)
 
   drawBullets = (bullets) ->
@@ -35,7 +35,7 @@ $ ->
     context = canvas.get(0).getContext("2d")
     ship = { width: 20, height: 20, x: canvas.width() / 2, y: 550, movementInterval: 10 }
     setInterval(gameLoop, 17)
-  
+
   gameLoop = ->
     updateBullets(bullets)
     clearCanvas()
