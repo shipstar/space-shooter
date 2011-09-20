@@ -50,12 +50,16 @@ $ ->
     if ship.movingRight
       ship.x += ship.movementInterval if (ship.x + ship.width) < canvas.width()
     if ship.firing
-      bullets.push { width: 2, height: 2, x: ship.x + ship.width / 2, y: ship.y - 1, velocity: -15 } unless bullets.length > 4
+      myBullets = (bullet for bullet in bullets when !bullet.expired && bullet.owner == ship)
+      if myBullets.length <= 4
+        bullets.push { width: 2, height: 2, x: ship.x + ship.width / 2, y: ship.y - 1, velocity: -8, owner: ship }
 
   updateTargets = ->
     for target in targets
       if target.expired
         score += 100
+      if Math.random() < 0.01
+        bullets.push { width: 4, height: 4, x: target.x + target.width / 2 - 2, y: target.y + target.height + 1, velocity: 4, owner: target }
     targets = (target for target in targets when !target.expired)
 
   updateBullets = ->
@@ -66,6 +70,8 @@ $ ->
         if bullet.y < target.y + target.height && bullet.y > target.y && bullet.x < target.x + target.width && bullet.x > target.x
           target.expired = true
           bullet.expired = true
+        if bullet.y < ship.y + ship.height && bullet.y > ship.y && bullet.x < ship.x + ship.width && bullet.x > ship.x
+          ship.expired = true
     bullets = (bullet for bullet in bullets when !bullet.expired)
 
   generateTarget = ->
@@ -77,8 +83,9 @@ $ ->
     context.clearRect(0, 0, canvas.width(), canvas.height())
 
   drawShip = (ship) ->
-    canvas.get(0).getContext("2d").fillRect(ship.x, ship.y, ship.width, ship.height)
-    canvas.get(0).getContext("2d").fillRect(ship.x + ship.width / 2 - 1, ship.y - 4, 2, 4)
+    unless ship.expired
+      canvas.get(0).getContext("2d").fillRect(ship.x, ship.y, ship.width, ship.height)
+      canvas.get(0).getContext("2d").fillRect(ship.x + ship.width / 2 - 1, ship.y - 4, 2, 4)
 
   drawBullets = (bullets) ->
     for bullet in bullets
