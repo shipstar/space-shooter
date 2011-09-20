@@ -12,12 +12,13 @@
     return this;
   };
   $(function() {
-    var bullets, canvas, clearCanvas, context, drawBullets, drawShip, drawTargets, gameLoop, generateTarget, handleKeys, init, ship, targets, updateBullets, updateShip;
+    var bullets, canvas, clearCanvas, context, drawBullets, drawScore, drawShip, drawTargets, gameLoop, generateTarget, handleKeys, init, score, ship, targets, updateBullets, updateShip, updateTargets;
     canvas = null;
     context = null;
     ship = null;
     bullets = [];
     targets = [];
+    score = 0;
     init = function() {
       canvas = $("#canvas");
       context = canvas.get(0).getContext("2d");
@@ -35,12 +36,14 @@
     };
     gameLoop = function() {
       updateBullets();
+      updateTargets();
       updateShip(ship);
       generateTarget();
       clearCanvas();
       drawShip(ship);
       drawBullets(bullets);
-      return drawTargets(targets);
+      drawTargets(targets);
+      return drawScore();
     };
     updateShip = function(ship) {
       if (ship.movingLeft) {
@@ -65,18 +68,48 @@
         }
       }
     };
+    updateTargets = function() {
+      var target, _i, _len;
+      for (_i = 0, _len = targets.length; _i < _len; _i++) {
+        target = targets[_i];
+        if (target.expired) {
+          score += 100;
+        }
+      }
+      return targets = (function() {
+        var _j, _len2, _results;
+        _results = [];
+        for (_j = 0, _len2 = targets.length; _j < _len2; _j++) {
+          target = targets[_j];
+          if (!target.expired) {
+            _results.push(target);
+          }
+        }
+        return _results;
+      })();
+    };
     updateBullets = function() {
-      var bullet, _i, _len;
+      var bullet, target, _i, _j, _len, _len2;
       for (_i = 0, _len = bullets.length; _i < _len; _i++) {
         bullet = bullets[_i];
         bullet.y += bullet.velocity;
+        if (bullet.y <= 0) {
+          bullet.expired = true;
+        }
+        for (_j = 0, _len2 = targets.length; _j < _len2; _j++) {
+          target = targets[_j];
+          if (bullet.y < target.y + target.height && bullet.y > target.y && bullet.x < target.x + target.width && bullet.x > target.x) {
+            target.expired = true;
+            bullet.expired = true;
+          }
+        }
       }
       return bullets = (function() {
-        var _j, _len2, _results;
+        var _k, _len3, _results;
         _results = [];
-        for (_j = 0, _len2 = bullets.length; _j < _len2; _j++) {
-          bullet = bullets[_j];
-          if (bullet.y > 0) {
+        for (_k = 0, _len3 = bullets.length; _k < _len3; _k++) {
+          bullet = bullets[_k];
+          if (!bullet.expired) {
             _results.push(bullet);
           }
         }
@@ -119,6 +152,9 @@
         _results.push(canvas.get(0).getContext("2d").fillRect(target.x, target.y, target.width, target.height));
       }
       return _results;
+    };
+    drawScore = function() {
+      return $('#score').text(score);
     };
     handleKeys = function(options) {
       return function() {

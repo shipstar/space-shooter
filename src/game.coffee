@@ -13,6 +13,7 @@ $ ->
   ship = null
   bullets = []
   targets = []
+  score = 0
 
   init = ->
     canvas = $("#canvas")
@@ -32,6 +33,7 @@ $ ->
   gameLoop = ->
     # game logic
     updateBullets()
+    updateTargets()
     updateShip(ship)
     generateTarget()
 
@@ -40,6 +42,7 @@ $ ->
     drawShip(ship)
     drawBullets(bullets)
     drawTargets(targets)
+    drawScore()
 
   updateShip = (ship) ->
     if ship.movingLeft
@@ -49,10 +52,21 @@ $ ->
     if ship.firing
       bullets.push { width: 2, height: 2, x: ship.x + ship.width / 2, y: ship.y - 1, velocity: -15 } unless bullets.length > 4
 
+  updateTargets = ->
+    for target in targets
+      if target.expired
+        score += 100
+    targets = (target for target in targets when !target.expired)
+
   updateBullets = ->
     for bullet in bullets
       bullet.y += bullet.velocity
-    bullets = (bullet for bullet in bullets when bullet.y > 0)
+      bullet.expired = true if bullet.y <= 0
+      for target in targets
+        if bullet.y < target.y + target.height && bullet.y > target.y && bullet.x < target.x + target.width && bullet.x > target.x
+          target.expired = true
+          bullet.expired = true
+    bullets = (bullet for bullet in bullets when !bullet.expired)
 
   generateTarget = ->
     if Math.random() < 0.01
@@ -74,7 +88,8 @@ $ ->
     for target in targets
       canvas.get(0).getContext("2d").fillRect(target.x, target.y, target.width, target.height)
 
-
+  drawScore = ->
+    $('#score').text(score)
 
   handleKeys = (options) -> ->
     if event.which == $.ui.keyCode.LEFT
