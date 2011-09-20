@@ -12,7 +12,7 @@
     return this;
   };
   $(function() {
-    var bullets, canvas, clearCanvas, context, drawBullets, drawShip, gameLoop, init, ship, updateBullets, updateShip;
+    var bullets, canvas, clearCanvas, context, drawBullets, drawShip, firing, gameLoop, init, movingLeft, movingRight, ship, updateBullets, updateShipDown, updateShipUp;
     canvas = null;
     context = null;
     ship = null;
@@ -24,7 +24,7 @@
       canvas.get(0).getContext("2d").fillRect(ship.x, ship.y, ship.width, ship.height);
       return canvas.get(0).getContext("2d").fillRect(ship.x + ship.width / 2 - 1, ship.y - 4, 2, 4);
     };
-    updateBullets = function(bullets) {
+    updateBullets = function() {
       var bullet, _i, _len;
       for (_i = 0, _len = bullets.length; _i < _len; _i++) {
         bullet = bullets[_i];
@@ -58,37 +58,65 @@
         width: 20,
         height: 20,
         x: canvas.width() / 2,
-        y: 550,
+        y: canvas.height() - 50,
         movementInterval: 10
       };
       return setInterval(gameLoop, 17);
     };
     gameLoop = function() {
-      updateBullets(bullets);
+      updateBullets();
       clearCanvas();
       drawShip(ship);
-      return drawBullets(bullets);
-    };
-    updateShip = function(event) {
-      if (event.which === $.ui.keyCode.LEFT) {
+      drawBullets(bullets);
+      if (movingLeft) {
         if (ship.x > 0) {
-          return ship.x -= ship.movementInterval;
+          ship.x -= ship.movementInterval;
         }
-      } else if (event.which === $.ui.keyCode.RIGHT) {
+      }
+      if (movingRight) {
         if ((ship.x + ship.width) < canvas.width()) {
-          return ship.x += ship.movementInterval;
+          ship.x += ship.movementInterval;
         }
-      } else if (event.which === $.ui.keyCode.SPACE) {
-        return bullets.push({
-          width: 2,
-          height: 2,
-          x: ship.x + ship.width / 2,
-          y: ship.y - 1,
-          velocity: -15
-        });
+      }
+      if (firing) {
+        if (!(bullets.length > 4)) {
+          return bullets.push({
+            width: 2,
+            height: 2,
+            x: ship.x + ship.width / 2,
+            y: ship.y - 1,
+            velocity: -15
+          });
+        }
       }
     };
-    $(document).keydown(updateShip);
+    movingLeft = false;
+    movingRight = false;
+    firing = false;
+    updateShipDown = function(event) {
+      if (event.which === $.ui.keyCode.LEFT) {
+        movingLeft = true;
+      }
+      if (event.which === $.ui.keyCode.RIGHT) {
+        movingRight = true;
+      }
+      if (event.which === $.ui.keyCode.SPACE) {
+        return firing = true;
+      }
+    };
+    updateShipUp = function(event) {
+      if (event.which === $.ui.keyCode.LEFT) {
+        movingLeft = false;
+      }
+      if (event.which === $.ui.keyCode.RIGHT) {
+        movingRight = false;
+      }
+      if (event.which === $.ui.keyCode.SPACE) {
+        return firing = false;
+      }
+    };
+    $(document).keydown(updateShipDown);
+    $(document).keyup(updateShipUp);
     return init();
   });
 }).call(this);
