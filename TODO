@@ -1,0 +1,7 @@
+- Keep track of lives
+- Actually kill the ship when it gets hit
+- Add ship object
+- Add sprites
+- Platform-independent forking for omniwatcher
+- Get HAML/SASS/Coffeescript integrated with Node.js (or other framework) for game
+- Deploy on Heroku
