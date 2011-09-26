@@ -1,11 +1,28 @@
 Array::remove = (value) ->
-    i = 0
-    while i < @length
-        if @[i] == value
-            @splice i, 1
-        else
-            ++i
-    return @
+  i = 0
+  while i < @length
+    if @[i] == value
+      @splice i, 1
+    else
+      ++i
+  return @
+
+class Ship
+  constructor: (@canvas) ->
+    this.init()
+
+  init: ->
+    @width = 20
+    @height = 20
+    @x = @canvas.width() / 2
+    @y = @canvas.height() - 50
+    @movementInterval = 10
+    @firing = false
+    @movingLeft = false
+    @movingRight = false
+    @respawning = false
+    @opacity = 1
+    @invincible = false
 
 $ ->
   canvas = null

@@ -1,4 +1,5 @@
 (function() {
+  var Ship;
   Array.prototype.remove = function(value) {
     var i;
     i = 0;
@@ -11,6 +12,26 @@
     }
     return this;
   };
+  Ship = (function() {
+    function Ship(canvas) {
+      this.canvas = canvas;
+      this.init();
+    }
+    Ship.prototype.init = function() {
+      this.width = 20;
+      this.height = 20;
+      this.x = this.canvas.width() / 2;
+      this.y = this.canvas.height() - 50;
+      this.movementInterval = 10;
+      this.firing = false;
+      this.movingLeft = false;
+      this.movingRight = false;
+      this.respawning = false;
+      this.opacity = 1;
+      return this.invincible = false;
+    };
+    return Ship;
+  })();
   $(function() {
     var bullets, canvas, clearCanvas, context, drawBullets, drawShip, drawStats, drawTargets, gameLoop, generateTarget, handleKeys, increaseOpacity, init, isAlive, lives, respawn, score, ship, targets, updateBullets, updateShip, updateTargets;
     canvas = null;
