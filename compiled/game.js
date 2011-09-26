@@ -1,5 +1,5 @@
 (function() {
-  var Ship;
+  var Ship, bullets, canvas, context, score, ship, targets;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   Array.prototype.remove = function(value) {
     var i;
@@ -13,10 +13,15 @@
     }
     return this;
   };
+  canvas = null;
+  context = null;
+  ship = null;
+  bullets = [];
+  targets = [];
+  score = 0;
   Ship = (function() {
-    function Ship(canvas, bullets) {
+    function Ship(canvas) {
       this.canvas = canvas;
-      this.bullets = bullets;
       this.update = __bind(this.update, this);
       this.increaseOpacity = __bind(this.increaseOpacity, this);
       this.respawn = __bind(this.respawn, this);
@@ -59,14 +64,7 @@
     };
     Ship.prototype.update = function() {
       var bullet, myBullets;
-      if (this.expired) {
-        this.lives -= 1;
-        this.expired = false;
-        this.respawning = true;
-        return setTimeout(this.respawn, 3000);
-      } else if (this.respawning) {
-        ;
-      } else {
+      if (this.isAlive()) {
         if (this.movingLeft) {
           if (this.x > 0) {
             this.x -= this.movementInterval;
@@ -79,11 +77,10 @@
         }
         if (this.firing) {
           myBullets = (function() {
-            var _i, _len, _ref, _results;
-            _ref = this.bullets;
+            var _i, _len, _results;
             _results = [];
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              bullet = _ref[_i];
+            for (_i = 0, _len = bullets.length; _i < _len; _i++) {
+              bullet = bullets[_i];
               if (!bullet.expired && bullet.owner === this) {
                 _results.push(bullet);
               }
@@ -91,7 +88,7 @@
             return _results;
           }).call(this);
           if (myBullets.length <= 4) {
-            return this.bullets.push({
+            return bullets.push({
               width: 2,
               height: 2,
               x: this.x + this.width / 2,
@@ -101,18 +98,17 @@
             });
           }
         }
+      } else if (this.expired) {
+        this.lives -= 1;
+        this.expired = false;
+        this.respawning = true;
+        return setTimeout(this.respawn, 3000);
       }
     };
     return Ship;
   })();
   $(function() {
-    var bullets, canvas, clearCanvas, context, drawBullets, drawShip, drawStats, drawTargets, gameLoop, generateTarget, handleKeys, init, score, ship, targets, updateBullets, updateTargets;
-    canvas = null;
-    context = null;
-    ship = null;
-    bullets = [];
-    targets = [];
-    score = 0;
+    var clearCanvas, drawBullets, drawShip, drawStats, drawTargets, gameLoop, generateTarget, handleKeys, init, updateBullets, updateTargets;
     init = function() {
       canvas = $("#canvas");
       context = canvas.get(0).getContext("2d");
@@ -162,7 +158,6 @@
     };
     updateBullets = function() {
       var bullet, target, _i, _j, _len, _len2;
-      console.log(ship.bullets);
       for (_i = 0, _len = bullets.length; _i < _len; _i++) {
         bullet = bullets[_i];
         bullet.y += bullet.velocity;

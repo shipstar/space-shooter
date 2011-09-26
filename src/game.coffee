@@ -7,8 +7,15 @@ Array::remove = (value) ->
       ++i
   return @
 
+canvas = null
+context = null
+ship = null
+bullets = []
+targets = []
+score = 0
+
 class Ship
-  constructor: (@canvas, @bullets) ->
+  constructor: (@canvas) ->
     this.init()
 
   init: =>
@@ -46,31 +53,22 @@ class Ship
       @opacityInterval = null
   
   update: =>
-    if @expired
-      @lives -= 1
-      @expired = false
-      @respawning = true
-      setTimeout this.respawn, 3000
-    else if @respawning
-      # do nothing
-    else
+    if this.isAlive()
       if @movingLeft
         @x -= @movementInterval if @x > 0
       if @movingRight
         @x += @movementInterval if (@x + @width) < @canvas.width()
       if @firing
-        myBullets = (bullet for bullet in @bullets when !bullet.expired && bullet.owner == this)
+        myBullets = (bullet for bullet in bullets when !bullet.expired && bullet.owner == this)
         if myBullets.length <= 4
-          @bullets.push { width: 2, height: 2, x: @x + @width / 2, y: @y - 1, velocity: -8, owner: this }
+          bullets.push { width: 2, height: 2, x: @x + @width / 2, y: @y - 1, velocity: -8, owner: this }
+    else if @expired
+      @lives -= 1
+      @expired = false
+      @respawning = true
+      setTimeout this.respawn, 3000
 
 $ ->
-  canvas = null
-  context = null
-  ship = null
-  bullets = []
-  targets = []
-  score = 0
-
   init = ->
     canvas = $("#canvas")
     context = canvas.get(0).getContext("2d")
@@ -100,7 +98,6 @@ $ ->
     targets = (target for target in targets when !target.expired)
 
   updateBullets = ->
-    console.log(ship.bullets)
     for bullet in bullets
       bullet.y += bullet.velocity
       bullet.expired = true if bullet.y <= 0
