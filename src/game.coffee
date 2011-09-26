@@ -19,10 +19,10 @@ $ ->
   init = ->
     canvas = $("#canvas")
     context = canvas.get(0).getContext("2d")
-    respawn()
+    respawn(invincible: false)
     setInterval(gameLoop, 17)
   
-  respawn = () ->
+  respawn = (options) ->
     ship = {
       width: 20,
       height: 20,
@@ -33,7 +33,11 @@ $ ->
       movingLeft: false,
       movingRight: false,
       respawning: false,
+      invincible: options.invincible || false,
     }
+
+    if ship.invincible
+      setTimeout (-> ship.invincible = false), 3000
 
   gameLoop = ->
     # game logic
@@ -54,7 +58,7 @@ $ ->
       lives -= 1
       ship.expired = false
       ship.respawning = true
-      setTimeout respawn, 3000
+      setTimeout (-> respawn(invincible: true)), 3000
     else if ship.respawning
       # do nothing
     else
@@ -87,7 +91,7 @@ $ ->
           target.expired = true
           bullet.expired = true
         if bullet.y < ship.y + ship.height && bullet.y > ship.y && bullet.x < ship.x + ship.width && bullet.x > ship.x && isAlive(ship)
-          ship.expired = true
+          ship.expired = true unless ship.invincible
           bullet.expired = true
     bullets = (bullet for bullet in bullets when !bullet.expired)
 
@@ -100,7 +104,7 @@ $ ->
     context.clearRect(0, 0, canvas.width(), canvas.height())
 
   drawShip = (ship) ->
-    unless ship.expired || ship.respawning
+    if isAlive(ship)
       canvas.get(0).getContext("2d").fillRect(ship.x, ship.y, ship.width, ship.height)
       canvas.get(0).getContext("2d").fillRect(ship.x + ship.width / 2 - 1, ship.y - 4, 2, 4)
 

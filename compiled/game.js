@@ -23,11 +23,13 @@
     init = function() {
       canvas = $("#canvas");
       context = canvas.get(0).getContext("2d");
-      respawn();
+      respawn({
+        invincible: false
+      });
       return setInterval(gameLoop, 17);
     };
-    respawn = function() {
-      return ship = {
+    respawn = function(options) {
+      ship = {
         width: 20,
         height: 20,
         x: canvas.width() / 2,
@@ -36,8 +38,14 @@
         firing: false,
         movingLeft: false,
         movingRight: false,
-        respawning: false
+        respawning: false,
+        invincible: options.invincible || false
       };
+      if (ship.invincible) {
+        return setTimeout((function() {
+          return ship.invincible = false;
+        }), 3000);
+      }
     };
     gameLoop = function() {
       updateBullets();
@@ -56,7 +64,11 @@
         lives -= 1;
         ship.expired = false;
         ship.respawning = true;
-        return setTimeout(respawn, 3000);
+        return setTimeout((function() {
+          return respawn({
+            invincible: true
+          });
+        }), 3000);
       } else if (ship.respawning) {
         ;
       } else {
@@ -143,7 +155,9 @@
             bullet.expired = true;
           }
           if (bullet.y < ship.y + ship.height && bullet.y > ship.y && bullet.x < ship.x + ship.width && bullet.x > ship.x && isAlive(ship)) {
-            ship.expired = true;
+            if (!ship.invincible) {
+              ship.expired = true;
+            }
             bullet.expired = true;
           }
         }
@@ -176,7 +190,7 @@
       return context.clearRect(0, 0, canvas.width(), canvas.height());
     };
     drawShip = function(ship) {
-      if (!(ship.expired || ship.respawning)) {
+      if (isAlive(ship)) {
         canvas.get(0).getContext("2d").fillRect(ship.x, ship.y, ship.width, ship.height);
         return canvas.get(0).getContext("2d").fillRect(ship.x + ship.width / 2 - 1, ship.y - 4, 2, 4);
       }
