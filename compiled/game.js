@@ -149,7 +149,7 @@
         return targets.push({
           width: targetWidth,
           height: 30,
-          x: Math.random() * canvas.width() - targetWidth,
+          x: Math.random() * (canvas.width() - targetWidth),
           y: 30
         });
       }

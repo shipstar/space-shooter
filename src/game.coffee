@@ -77,7 +77,7 @@ $ ->
   generateTarget = ->
     if Math.random() < 0.01
       targetWidth = 30
-      targets.push { width: targetWidth, height: 30, x: Math.random() * canvas.width() - targetWidth, y: 30 }
+      targets.push { width: targetWidth, height: 30, x: Math.random() * (canvas.width() - targetWidth), y: 30 }
 
   clearCanvas = ->
     context.clearRect(0, 0, canvas.width(), canvas.height())
