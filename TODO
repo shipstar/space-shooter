@@ -5,3 +5,7 @@
 - Get HAML/SASS/Coffeescript integrated with Node.js (or other framework) for game
   - Make sure that files can be required
 - Deploy on Heroku
+
+
+Open questions:
+- why does passing canvas in to ship work but passing bullets does not?

@@ -22,6 +22,7 @@
   Ship = (function() {
     function Ship(canvas) {
       this.canvas = canvas;
+      this.draw = __bind(this.draw, this);
       this.update = __bind(this.update, this);
       this.increaseOpacity = __bind(this.increaseOpacity, this);
       this.respawn = __bind(this.respawn, this);
@@ -105,14 +106,22 @@
         return setTimeout(this.respawn, 3000);
       }
     };
+    Ship.prototype.draw = function() {
+      if (this.isAlive()) {
+        context.globalAlpha = this.opacity;
+        context.fillRect(this.x, this.y, this.width, this.height);
+        context.fillRect(this.x + this.width / 2 - 1, this.y - 4, 2, 4);
+        return context.globalAlpha = 1;
+      }
+    };
     return Ship;
   })();
   $(function() {
-    var clearCanvas, drawBullets, drawShip, drawStats, drawTargets, gameLoop, generateTarget, handleKeys, init, updateBullets, updateTargets;
+    var clearCanvas, drawBullets, drawStats, drawTargets, gameLoop, generateTarget, handleKeys, init, updateBullets, updateTargets;
     init = function() {
       canvas = $("#canvas");
       context = canvas.get(0).getContext("2d");
-      ship = new Ship(canvas, bullets);
+      ship = new Ship(canvas);
       return setInterval(gameLoop, 17);
     };
     gameLoop = function() {
@@ -121,7 +130,7 @@
       ship.update();
       generateTarget();
       clearCanvas();
-      drawShip(ship);
+      ship.draw();
       drawBullets(bullets);
       drawTargets(targets);
       return drawStats();
@@ -205,15 +214,6 @@
     clearCanvas = function() {
       return context.clearRect(0, 0, canvas.width(), canvas.height());
     };
-    drawShip = function(ship) {
-      if (ship.isAlive()) {
-        context = canvas.get(0).getContext("2d");
-        context.globalAlpha = ship.opacity;
-        context.fillRect(ship.x, ship.y, ship.width, ship.height);
-        context.fillRect(ship.x + ship.width / 2 - 1, ship.y - 4, 2, 4);
-        return context.globalAlpha = 1;
-      }
-    };
     drawBullets = function(bullets) {
       var bullet, _i, _len, _results;
       _results = [];
@@ -234,7 +234,7 @@
     };
     drawStats = function() {
       $('#score').text(score);
-      return $('#lives').text(lives);
+      return $('#lives').text(ship.lives);
     };
     handleKeys = function(options) {
       return function() {

@@ -68,11 +68,19 @@ class Ship
       @respawning = true
       setTimeout this.respawn, 3000
 
+  draw: =>
+    if this.isAlive()
+      context.globalAlpha = @opacity
+      context.fillRect(@x, @y, @width, @height)
+      context.fillRect(@x + @width / 2 - 1, @y - 4, 2, 4)
+      context.globalAlpha = 1
+    
+
 $ ->
   init = ->
     canvas = $("#canvas")
     context = canvas.get(0).getContext("2d")
-    ship = new Ship canvas, bullets
+    ship = new Ship canvas
     setInterval(gameLoop, 17)
 
   gameLoop = ->
@@ -84,7 +92,7 @@ $ ->
 
     # drawing loop
     clearCanvas()
-    drawShip(ship)
+    ship.draw()
     drawBullets(bullets)
     drawTargets(targets)
     drawStats()
@@ -118,17 +126,6 @@ $ ->
   clearCanvas = ->
     context.clearRect(0, 0, canvas.width(), canvas.height())
 
-  drawShip = (ship) ->
-    if ship.isAlive()
-      context = canvas.get(0).getContext("2d")
-      context.globalAlpha = ship.opacity
-
-      context.fillRect(ship.x, ship.y, ship.width, ship.height)
-      context.fillRect(ship.x + ship.width / 2 - 1, ship.y - 4, 2, 4)
-
-      context.globalAlpha = 1
-    
-
   drawBullets = (bullets) ->
     for bullet in bullets
       canvas.get(0).getContext("2d").fillRect(bullet.x, bullet.y, bullet.width, bullet.height)
@@ -139,7 +136,7 @@ $ ->
 
   drawStats = ->
     $('#score').text(score)
-    $('#lives').text(lives)
+    $('#lives').text(ship.lives)
 
   handleKeys = (options) -> ->
     if event.which == $.ui.keyCode.LEFT
