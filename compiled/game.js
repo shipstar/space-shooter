@@ -12,7 +12,7 @@
     return this;
   };
   $(function() {
-    var bullets, canvas, clearCanvas, context, drawBullets, drawShip, drawStats, drawTargets, gameLoop, generateTarget, handleKeys, init, lives, respawn, score, ship, targets, updateBullets, updateShip, updateTargets;
+    var bullets, canvas, clearCanvas, context, drawBullets, drawShip, drawStats, drawTargets, gameLoop, generateTarget, handleKeys, init, isAlive, lives, respawn, score, ship, targets, updateBullets, updateShip, updateTargets;
     canvas = null;
     context = null;
     ship = null;
@@ -93,6 +93,9 @@
         }
       }
     };
+    isAlive = function(ship) {
+      return !(ship.expired || ship.respawning);
+    };
     updateTargets = function() {
       var target, _i, _len;
       for (_i = 0, _len = targets.length; _i < _len; _i++) {
@@ -137,7 +140,7 @@
             target.expired = true;
             bullet.expired = true;
           }
-          if (bullet.y < ship.y + ship.height && bullet.y > ship.y && bullet.x < ship.x + ship.width && bullet.x > ship.x) {
+          if (bullet.y < ship.y + ship.height && bullet.y > ship.y && bullet.x < ship.x + ship.width && bullet.x > ship.x && isAlive(ship)) {
             ship.expired = true;
             bullet.expired = true;
           }
@@ -171,7 +174,7 @@
       return context.clearRect(0, 0, canvas.width(), canvas.height());
     };
     drawShip = function(ship) {
-      if (!ship.expired) {
+      if (!(ship.expired || ship.respawning)) {
         canvas.get(0).getContext("2d").fillRect(ship.x, ship.y, ship.width, ship.height);
         return canvas.get(0).getContext("2d").fillRect(ship.x + ship.width / 2 - 1, ship.y - 4, 2, 4);
       }
