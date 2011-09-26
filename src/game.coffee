@@ -24,6 +24,9 @@ class Ship
     @opacity = 1
     @invincible = false
 
+  isAlive: ->
+    !(@expired || @respawning)
+
 $ ->
   canvas = null
   context = null
@@ -36,23 +39,12 @@ $ ->
   init = ->
     canvas = $("#canvas")
     context = canvas.get(0).getContext("2d")
-    respawn(invincible: false)
+    ship = new Ship canvas
     setInterval(gameLoop, 17)
   
   respawn = (options) ->
-    ship = {
-      width: 20,
-      height: 20,
-      x: canvas.width() / 2,
-      y: canvas.height() - 50,
-      movementInterval: 10,
-      firing: false,
-      movingLeft: false,
-      movingRight: false,
-      respawning: false,
-      opacity: 1,
-      invincible: options.invincible || false,
-    }
+    ship.respawning = false
+    ship.invincible = options.invincible || false
 
     if ship.invincible
       setTimeout (-> ship.invincible = false), 3000
@@ -117,7 +109,7 @@ $ ->
         if bullet.y < target.y + target.height && bullet.y > target.y && bullet.x < target.x + target.width && bullet.x > target.x
           target.expired = true
           bullet.expired = true
-        if bullet.y < ship.y + ship.height && bullet.y > ship.y && bullet.x < ship.x + ship.width && bullet.x > ship.x && isAlive(ship)
+        if bullet.y < ship.y + ship.height && bullet.y > ship.y && bullet.x < ship.x + ship.width && bullet.x > ship.x && ship.isAlive()
           ship.expired = true unless ship.invincible
           bullet.expired = true
     bullets = (bullet for bullet in bullets when !bullet.expired)
@@ -131,7 +123,7 @@ $ ->
     context.clearRect(0, 0, canvas.width(), canvas.height())
 
   drawShip = (ship) ->
-    if isAlive(ship)
+    if ship.isAlive()
       context = canvas.get(0).getContext("2d")
       context.globalAlpha = ship.opacity
 
