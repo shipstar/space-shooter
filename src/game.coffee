@@ -75,12 +75,23 @@ class Ship
       context.fillRect(@x + @width / 2 - 1, @y - 4, 2, 4)
       context.globalAlpha = 1
     
+  handleKeys: (options) => =>
+    switch event.which
+      when $.ui.keyCode.LEFT
+        @movingLeft = options.down
+      when $.ui.keyCode.RIGHT
+        @movingRight = options.down
+      when $.ui.keyCode.SPACE
+        @firing = options.down
+
 
 $ ->
   init = ->
     canvas = $("#canvas")
     context = canvas.get(0).getContext("2d")
     ship = new Ship canvas
+    $(document).keydown(ship.handleKeys(down: true))
+    $(document).keyup(ship.handleKeys(down: false))
     setInterval(gameLoop, 17)
 
   gameLoop = ->
@@ -137,17 +148,5 @@ $ ->
   drawStats = ->
     $('#score').text(score)
     $('#lives').text(ship.lives)
-
-  handleKeys = (options) -> ->
-    if event.which == $.ui.keyCode.LEFT
-      ship.movingLeft = options.down
-    if event.which == $.ui.keyCode.RIGHT
-      ship.movingRight = options.down
-    if event.which == $.ui.keyCode.SPACE
-      ship.firing = options.down
-
-  $(document).keydown(handleKeys(down: true))
-  $(document).keyup(handleKeys(down: false))
-
 
   init()

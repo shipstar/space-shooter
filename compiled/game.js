@@ -22,6 +22,7 @@
   Ship = (function() {
     function Ship(canvas) {
       this.canvas = canvas;
+      this.handleKeys = __bind(this.handleKeys, this);
       this.draw = __bind(this.draw, this);
       this.update = __bind(this.update, this);
       this.increaseOpacity = __bind(this.increaseOpacity, this);
@@ -114,14 +115,32 @@
         return context.globalAlpha = 1;
       }
     };
+    Ship.prototype.handleKeys = function(options) {
+      return __bind(function() {
+        switch (event.which) {
+          case $.ui.keyCode.LEFT:
+            return this.movingLeft = options.down;
+          case $.ui.keyCode.RIGHT:
+            return this.movingRight = options.down;
+          case $.ui.keyCode.SPACE:
+            return this.firing = options.down;
+        }
+      }, this);
+    };
     return Ship;
   })();
   $(function() {
-    var clearCanvas, drawBullets, drawStats, drawTargets, gameLoop, generateTarget, handleKeys, init, updateBullets, updateTargets;
+    var clearCanvas, drawBullets, drawStats, drawTargets, gameLoop, generateTarget, init, updateBullets, updateTargets;
     init = function() {
       canvas = $("#canvas");
       context = canvas.get(0).getContext("2d");
       ship = new Ship(canvas);
+      $(document).keydown(ship.handleKeys({
+        down: true
+      }));
+      $(document).keyup(ship.handleKeys({
+        down: false
+      }));
       return setInterval(gameLoop, 17);
     };
     gameLoop = function() {
@@ -236,25 +255,6 @@
       $('#score').text(score);
       return $('#lives').text(ship.lives);
     };
-    handleKeys = function(options) {
-      return function() {
-        if (event.which === $.ui.keyCode.LEFT) {
-          ship.movingLeft = options.down;
-        }
-        if (event.which === $.ui.keyCode.RIGHT) {
-          ship.movingRight = options.down;
-        }
-        if (event.which === $.ui.keyCode.SPACE) {
-          return ship.firing = options.down;
-        }
-      };
-    };
-    $(document).keydown(handleKeys({
-      down: true
-    }));
-    $(document).keyup(handleKeys({
-      down: false
-    }));
     return init();
   });
 }).call(this);
