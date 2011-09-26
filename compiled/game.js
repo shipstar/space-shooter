@@ -12,7 +12,7 @@
     return this;
   };
   $(function() {
-    var bullets, canvas, clearCanvas, context, drawBullets, drawShip, drawStats, drawTargets, gameLoop, generateTarget, handleKeys, init, lives, score, ship, targets, updateBullets, updateShip, updateTargets;
+    var bullets, canvas, clearCanvas, context, drawBullets, drawShip, drawStats, drawTargets, gameLoop, generateTarget, handleKeys, init, lives, respawn, score, ship, targets, updateBullets, updateShip, updateTargets;
     canvas = null;
     context = null;
     ship = null;
@@ -23,7 +23,11 @@
     init = function() {
       canvas = $("#canvas");
       context = canvas.get(0).getContext("2d");
-      ship = {
+      respawn();
+      return setInterval(gameLoop, 17);
+    };
+    respawn = function() {
+      return ship = {
         width: 20,
         height: 20,
         x: canvas.width() / 2,
@@ -31,9 +35,9 @@
         movementInterval: 10,
         firing: false,
         movingLeft: false,
-        movingRight: false
+        movingRight: false,
+        respawning: false
       };
-      return setInterval(gameLoop, 17);
     };
     gameLoop = function() {
       updateBullets();
@@ -48,42 +52,45 @@
     };
     updateShip = function(ship) {
       var bullet, myBullets;
-      if (ship.movingLeft) {
-        if (ship.x > 0) {
-          ship.x -= ship.movementInterval;
-        }
-      }
-      if (ship.movingRight) {
-        if ((ship.x + ship.width) < canvas.width()) {
-          ship.x += ship.movementInterval;
-        }
-      }
-      if (ship.firing) {
-        myBullets = (function() {
-          var _i, _len, _results;
-          _results = [];
-          for (_i = 0, _len = bullets.length; _i < _len; _i++) {
-            bullet = bullets[_i];
-            if (!bullet.expired && bullet.owner === ship) {
-              _results.push(bullet);
-            }
-          }
-          return _results;
-        })();
-        if (myBullets.length <= 4) {
-          bullets.push({
-            width: 2,
-            height: 2,
-            x: ship.x + ship.width / 2,
-            y: ship.y - 1,
-            velocity: -8,
-            owner: ship
-          });
-        }
-      }
       if (ship.expired) {
         lives -= 1;
-        return ship.expired = false;
+        ship.expired = false;
+        ship.respawning = true;
+        return setTimeout(respawn, 3000);
+      } else {
+        if (ship.movingLeft) {
+          if (ship.x > 0) {
+            ship.x -= ship.movementInterval;
+          }
+        }
+        if (ship.movingRight) {
+          if ((ship.x + ship.width) < canvas.width()) {
+            ship.x += ship.movementInterval;
+          }
+        }
+        if (ship.firing) {
+          myBullets = (function() {
+            var _i, _len, _results;
+            _results = [];
+            for (_i = 0, _len = bullets.length; _i < _len; _i++) {
+              bullet = bullets[_i];
+              if (!bullet.expired && bullet.owner === ship) {
+                _results.push(bullet);
+              }
+            }
+            return _results;
+          })();
+          if (myBullets.length <= 4) {
+            return bullets.push({
+              width: 2,
+              height: 2,
+              x: ship.x + ship.width / 2,
+              y: ship.y - 1,
+              velocity: -8,
+              owner: ship
+            });
+          }
+        }
       }
     };
     updateTargets = function() {

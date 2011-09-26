@@ -19,6 +19,10 @@ $ ->
   init = ->
     canvas = $("#canvas")
     context = canvas.get(0).getContext("2d")
+    respawn()
+    setInterval(gameLoop, 17)
+  
+  respawn = () ->
     ship = {
       width: 20,
       height: 20,
@@ -28,8 +32,8 @@ $ ->
       firing: false,
       movingLeft: false,
       movingRight: false,
+      respawning: false,
     }
-    setInterval(gameLoop, 17)
 
   gameLoop = ->
     # game logic
@@ -46,17 +50,20 @@ $ ->
     drawStats()
 
   updateShip = (ship) ->
-    if ship.movingLeft
-      ship.x -= ship.movementInterval if ship.x > 0
-    if ship.movingRight
-      ship.x += ship.movementInterval if (ship.x + ship.width) < canvas.width()
-    if ship.firing
-      myBullets = (bullet for bullet in bullets when !bullet.expired && bullet.owner == ship)
-      if myBullets.length <= 4
-        bullets.push { width: 2, height: 2, x: ship.x + ship.width / 2, y: ship.y - 1, velocity: -8, owner: ship }
     if ship.expired
       lives -= 1
       ship.expired = false
+      ship.respawning = true
+      setTimeout respawn, 3000
+    else
+      if ship.movingLeft
+        ship.x -= ship.movementInterval if ship.x > 0
+      if ship.movingRight
+        ship.x += ship.movementInterval if (ship.x + ship.width) < canvas.width()
+      if ship.firing
+        myBullets = (bullet for bullet in bullets when !bullet.expired && bullet.owner == ship)
+        if myBullets.length <= 4
+          bullets.push { width: 2, height: 2, x: ship.x + ship.width / 2, y: ship.y - 1, velocity: -8, owner: ship }
 
   updateTargets = ->
     for target in targets
