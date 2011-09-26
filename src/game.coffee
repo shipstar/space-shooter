@@ -55,6 +55,8 @@ $ ->
       ship.expired = false
       ship.respawning = true
       setTimeout respawn, 3000
+    else if ship.respawning
+      # do nothing
     else
       if ship.movingLeft
         ship.x -= ship.movementInterval if ship.x > 0

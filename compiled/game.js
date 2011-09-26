@@ -57,6 +57,8 @@
         ship.expired = false;
         ship.respawning = true;
         return setTimeout(respawn, 3000);
+      } else if (ship.respawning) {
+        ;
       } else {
         if (ship.movingLeft) {
           if (ship.x > 0) {
