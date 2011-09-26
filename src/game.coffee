@@ -33,11 +33,21 @@ $ ->
       movingLeft: false,
       movingRight: false,
       respawning: false,
+      opacity: 1,
       invincible: options.invincible || false,
     }
 
     if ship.invincible
       setTimeout (-> ship.invincible = false), 3000
+      ship.opacity = 0.2
+      ship.opacityInterval = setInterval increaseOpacity, 300
+  
+  increaseOpacity = ->
+    ship.opacity += 0.08
+    if ship.opacity >= 1
+      ship.opacity = 1
+      clearInterval ship.opacityInterval
+      ship.opacityInterval = null
 
   gameLoop = ->
     # game logic
@@ -105,8 +115,14 @@ $ ->
 
   drawShip = (ship) ->
     if isAlive(ship)
-      canvas.get(0).getContext("2d").fillRect(ship.x, ship.y, ship.width, ship.height)
-      canvas.get(0).getContext("2d").fillRect(ship.x + ship.width / 2 - 1, ship.y - 4, 2, 4)
+      context = canvas.get(0).getContext("2d")
+      context.globalAlpha = ship.opacity
+
+      context.fillRect(ship.x, ship.y, ship.width, ship.height)
+      context.fillRect(ship.x + ship.width / 2 - 1, ship.y - 4, 2, 4)
+
+      context.globalAlpha = 1
+    
 
   drawBullets = (bullets) ->
     for bullet in bullets
