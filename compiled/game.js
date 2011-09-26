@@ -12,13 +12,14 @@
     return this;
   };
   $(function() {
-    var bullets, canvas, clearCanvas, context, drawBullets, drawScore, drawShip, drawTargets, gameLoop, generateTarget, handleKeys, init, score, ship, targets, updateBullets, updateShip, updateTargets;
+    var bullets, canvas, clearCanvas, context, drawBullets, drawShip, drawStats, drawTargets, gameLoop, generateTarget, handleKeys, init, lives, score, ship, targets, updateBullets, updateShip, updateTargets;
     canvas = null;
     context = null;
     ship = null;
     bullets = [];
     targets = [];
     score = 0;
+    lives = 3;
     init = function() {
       canvas = $("#canvas");
       context = canvas.get(0).getContext("2d");
@@ -43,7 +44,7 @@
       drawShip(ship);
       drawBullets(bullets);
       drawTargets(targets);
-      return drawScore();
+      return drawStats();
     };
     updateShip = function(ship) {
       var bullet, myBullets;
@@ -70,7 +71,7 @@
           return _results;
         })();
         if (myBullets.length <= 4) {
-          return bullets.push({
+          bullets.push({
             width: 2,
             height: 2,
             x: ship.x + ship.width / 2,
@@ -79,6 +80,10 @@
             owner: ship
           });
         }
+      }
+      if (ship.expired) {
+        lives -= 1;
+        return ship.expired = false;
       }
     };
     updateTargets = function() {
@@ -127,6 +132,7 @@
           }
           if (bullet.y < ship.y + ship.height && bullet.y > ship.y && bullet.x < ship.x + ship.width && bullet.x > ship.x) {
             ship.expired = true;
+            bullet.expired = true;
           }
         }
       }
@@ -181,8 +187,9 @@
       }
       return _results;
     };
-    drawScore = function() {
-      return $('#score').text(score);
+    drawStats = function() {
+      $('#score').text(score);
+      return $('#lives').text(lives);
     };
     handleKeys = function(options) {
       return function() {
