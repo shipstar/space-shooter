@@ -11,7 +11,7 @@ class Ship
   constructor: (@canvas) ->
     this.init()
 
-  init: ->
+  init: =>
     @width = 20
     @height = 20
     @x = @canvas.width() / 2
@@ -24,7 +24,7 @@ class Ship
     @invincible = false
     @opacity = 1
 
-  isAlive: ->
+  isAlive: =>
     !(@expired || @respawning)
   
   respawn: =>
@@ -35,6 +35,7 @@ class Ship
     @opacity = 0.2
     @opacityInterval = setInterval this.increaseOpacity, 300
   
+  # TODO: Ties visual artifact to logical artifact. Is this acceptable?
   increaseOpacity: =>
     @opacity += 0.08
     if @opacity >= 1

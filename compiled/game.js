@@ -18,6 +18,8 @@
       this.canvas = canvas;
       this.increaseOpacity = __bind(this.increaseOpacity, this);
       this.respawn = __bind(this.respawn, this);
+      this.isAlive = __bind(this.isAlive, this);
+      this.init = __bind(this.init, this);
       this.init();
     }
     Ship.prototype.init = function() {
