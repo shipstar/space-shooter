@@ -8,7 +8,7 @@ Array::remove = (value) ->
   return @
 
 class Ship
-  constructor: (@canvas) ->
+  constructor: (@canvas, @bullets) ->
     this.init()
 
   init: =>
@@ -23,6 +23,7 @@ class Ship
     @respawning = false
     @invincible = false
     @opacity = 1
+    @lives = 3
 
   isAlive: =>
     !(@expired || @respawning)
@@ -43,6 +44,24 @@ class Ship
       @invincible = false
       clearInterval @opacityInterval
       @opacityInterval = null
+  
+  update: =>
+    if @expired
+      @lives -= 1
+      @expired = false
+      @respawning = true
+      setTimeout this.respawn, 3000
+    else if @respawning
+      # do nothing
+    else
+      if @movingLeft
+        @x -= @movementInterval if @x > 0
+      if @movingRight
+        @x += @movementInterval if (@x + @width) < @canvas.width()
+      if @firing
+        myBullets = (bullet for bullet in @bullets when !bullet.expired && bullet.owner == this)
+        if myBullets.length <= 4
+          @bullets.push { width: 2, height: 2, x: @x + @width / 2, y: @y - 1, velocity: -8, owner: this }
 
 $ ->
   canvas = null
@@ -51,19 +70,18 @@ $ ->
   bullets = []
   targets = []
   score = 0
-  lives = 3
 
   init = ->
     canvas = $("#canvas")
     context = canvas.get(0).getContext("2d")
-    ship = new Ship canvas
+    ship = new Ship canvas, bullets
     setInterval(gameLoop, 17)
 
   gameLoop = ->
     # game logic
     updateBullets()
     updateTargets()
-    updateShip(ship)
+    ship.update()
     generateTarget()
 
     # drawing loop
@@ -72,27 +90,6 @@ $ ->
     drawBullets(bullets)
     drawTargets(targets)
     drawStats()
-
-  updateShip = (ship) ->
-    if ship.expired
-      lives -= 1
-      ship.expired = false
-      ship.respawning = true
-      setTimeout ship.respawn, 3000
-    else if ship.respawning
-      # do nothing
-    else
-      if ship.movingLeft
-        ship.x -= ship.movementInterval if ship.x > 0
-      if ship.movingRight
-        ship.x += ship.movementInterval if (ship.x + ship.width) < canvas.width()
-      if ship.firing
-        myBullets = (bullet for bullet in bullets when !bullet.expired && bullet.owner == ship)
-        if myBullets.length <= 4
-          bullets.push { width: 2, height: 2, x: ship.x + ship.width / 2, y: ship.y - 1, velocity: -8, owner: ship }
-  
-  isAlive = (ship) ->
-    !(ship.expired || ship.respawning)
 
   updateTargets = ->
     for target in targets
@@ -103,6 +100,7 @@ $ ->
     targets = (target for target in targets when !target.expired)
 
   updateBullets = ->
+    console.log(ship.bullets)
     for bullet in bullets
       bullet.y += bullet.velocity
       bullet.expired = true if bullet.y <= 0

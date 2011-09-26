@@ -14,8 +14,10 @@
     return this;
   };
   Ship = (function() {
-    function Ship(canvas) {
+    function Ship(canvas, bullets) {
       this.canvas = canvas;
+      this.bullets = bullets;
+      this.update = __bind(this.update, this);
       this.increaseOpacity = __bind(this.increaseOpacity, this);
       this.respawn = __bind(this.respawn, this);
       this.isAlive = __bind(this.isAlive, this);
@@ -33,7 +35,8 @@
       this.movingRight = false;
       this.respawning = false;
       this.invincible = false;
-      return this.opacity = 1;
+      this.opacity = 1;
+      return this.lives = 3;
     };
     Ship.prototype.isAlive = function() {
       return !(this.expired || this.respawning);
@@ -54,81 +57,78 @@
         return this.opacityInterval = null;
       }
     };
+    Ship.prototype.update = function() {
+      var bullet, myBullets;
+      if (this.expired) {
+        this.lives -= 1;
+        this.expired = false;
+        this.respawning = true;
+        return setTimeout(this.respawn, 3000);
+      } else if (this.respawning) {
+        ;
+      } else {
+        if (this.movingLeft) {
+          if (this.x > 0) {
+            this.x -= this.movementInterval;
+          }
+        }
+        if (this.movingRight) {
+          if ((this.x + this.width) < this.canvas.width()) {
+            this.x += this.movementInterval;
+          }
+        }
+        if (this.firing) {
+          myBullets = (function() {
+            var _i, _len, _ref, _results;
+            _ref = this.bullets;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              bullet = _ref[_i];
+              if (!bullet.expired && bullet.owner === this) {
+                _results.push(bullet);
+              }
+            }
+            return _results;
+          }).call(this);
+          if (myBullets.length <= 4) {
+            return this.bullets.push({
+              width: 2,
+              height: 2,
+              x: this.x + this.width / 2,
+              y: this.y - 1,
+              velocity: -8,
+              owner: this
+            });
+          }
+        }
+      }
+    };
     return Ship;
   })();
   $(function() {
-    var bullets, canvas, clearCanvas, context, drawBullets, drawShip, drawStats, drawTargets, gameLoop, generateTarget, handleKeys, init, isAlive, lives, score, ship, targets, updateBullets, updateShip, updateTargets;
+    var bullets, canvas, clearCanvas, context, drawBullets, drawShip, drawStats, drawTargets, gameLoop, generateTarget, handleKeys, init, score, ship, targets, updateBullets, updateTargets;
     canvas = null;
     context = null;
     ship = null;
     bullets = [];
     targets = [];
     score = 0;
-    lives = 3;
     init = function() {
       canvas = $("#canvas");
       context = canvas.get(0).getContext("2d");
-      ship = new Ship(canvas);
+      ship = new Ship(canvas, bullets);
       return setInterval(gameLoop, 17);
     };
     gameLoop = function() {
       updateBullets();
       updateTargets();
-      updateShip(ship);
+      ship.update();
       generateTarget();
       clearCanvas();
       drawShip(ship);
       drawBullets(bullets);
       drawTargets(targets);
       return drawStats();
-    };
-    updateShip = function(ship) {
-      var bullet, myBullets;
-      if (ship.expired) {
-        lives -= 1;
-        ship.expired = false;
-        ship.respawning = true;
-        return setTimeout(ship.respawn, 3000);
-      } else if (ship.respawning) {
-        ;
-      } else {
-        if (ship.movingLeft) {
-          if (ship.x > 0) {
-            ship.x -= ship.movementInterval;
-          }
-        }
-        if (ship.movingRight) {
-          if ((ship.x + ship.width) < canvas.width()) {
-            ship.x += ship.movementInterval;
-          }
-        }
-        if (ship.firing) {
-          myBullets = (function() {
-            var _i, _len, _results;
-            _results = [];
-            for (_i = 0, _len = bullets.length; _i < _len; _i++) {
-              bullet = bullets[_i];
-              if (!bullet.expired && bullet.owner === ship) {
-                _results.push(bullet);
-              }
-            }
-            return _results;
-          })();
-          if (myBullets.length <= 4) {
-            return bullets.push({
-              width: 2,
-              height: 2,
-              x: ship.x + ship.width / 2,
-              y: ship.y - 1,
-              velocity: -8,
-              owner: ship
-            });
-          }
-        }
-      }
-    };
-    isAlive = function(ship) {
-      return !(ship.expired || ship.respawning);
     };
     updateTargets = function() {
       var target, _i, _len;
@@ -162,6 +162,7 @@
     };
     updateBullets = function() {
       var bullet, target, _i, _j, _len, _len2;
+      console.log(ship.bullets);
       for (_i = 0, _len = bullets.length; _i < _len; _i++) {
         bullet = bullets[_i];
         bullet.y += bullet.velocity;
