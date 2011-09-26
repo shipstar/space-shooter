@@ -21,11 +21,27 @@ class Ship
     @movingLeft = false
     @movingRight = false
     @respawning = false
-    @opacity = 1
     @invincible = false
+    @opacity = 1
 
   isAlive: ->
     !(@expired || @respawning)
+  
+  respawn: =>
+    this.init()
+    @respawning = false
+    @invincible = true
+    
+    @opacity = 0.2
+    @opacityInterval = setInterval this.increaseOpacity, 300
+  
+  increaseOpacity: =>
+    @opacity += 0.08
+    if @opacity >= 1
+      @opacity = 1
+      @invincible = false
+      clearInterval @opacityInterval
+      @opacityInterval = null
 
 $ ->
   canvas = null
@@ -41,22 +57,6 @@ $ ->
     context = canvas.get(0).getContext("2d")
     ship = new Ship canvas
     setInterval(gameLoop, 17)
-  
-  respawn = (options) ->
-    ship.respawning = false
-    ship.invincible = options.invincible || false
-
-    if ship.invincible
-      setTimeout (-> ship.invincible = false), 3000
-      ship.opacity = 0.2
-      ship.opacityInterval = setInterval increaseOpacity, 300
-  
-  increaseOpacity = ->
-    ship.opacity += 0.08
-    if ship.opacity >= 1
-      ship.opacity = 1
-      clearInterval ship.opacityInterval
-      ship.opacityInterval = null
 
   gameLoop = ->
     # game logic
@@ -77,7 +77,7 @@ $ ->
       lives -= 1
       ship.expired = false
       ship.respawning = true
-      setTimeout (-> respawn(invincible: true)), 3000
+      setTimeout ship.respawn, 3000
     else if ship.respawning
       # do nothing
     else

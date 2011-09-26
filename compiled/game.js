@@ -1,5 +1,6 @@
 (function() {
   var Ship;
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   Array.prototype.remove = function(value) {
     var i;
     i = 0;
@@ -15,6 +16,8 @@
   Ship = (function() {
     function Ship(canvas) {
       this.canvas = canvas;
+      this.increaseOpacity = __bind(this.increaseOpacity, this);
+      this.respawn = __bind(this.respawn, this);
       this.init();
     }
     Ship.prototype.init = function() {
@@ -27,16 +30,32 @@
       this.movingLeft = false;
       this.movingRight = false;
       this.respawning = false;
-      this.opacity = 1;
-      return this.invincible = false;
+      this.invincible = false;
+      return this.opacity = 1;
     };
     Ship.prototype.isAlive = function() {
       return !(this.expired || this.respawning);
     };
+    Ship.prototype.respawn = function() {
+      this.init();
+      this.respawning = false;
+      this.invincible = true;
+      this.opacity = 0.2;
+      return this.opacityInterval = setInterval(this.increaseOpacity, 300);
+    };
+    Ship.prototype.increaseOpacity = function() {
+      this.opacity += 0.08;
+      if (this.opacity >= 1) {
+        this.opacity = 1;
+        this.invincible = false;
+        clearInterval(this.opacityInterval);
+        return this.opacityInterval = null;
+      }
+    };
     return Ship;
   })();
   $(function() {
-    var bullets, canvas, clearCanvas, context, drawBullets, drawShip, drawStats, drawTargets, gameLoop, generateTarget, handleKeys, increaseOpacity, init, isAlive, lives, respawn, score, ship, targets, updateBullets, updateShip, updateTargets;
+    var bullets, canvas, clearCanvas, context, drawBullets, drawShip, drawStats, drawTargets, gameLoop, generateTarget, handleKeys, init, isAlive, lives, score, ship, targets, updateBullets, updateShip, updateTargets;
     canvas = null;
     context = null;
     ship = null;
@@ -49,25 +68,6 @@
       context = canvas.get(0).getContext("2d");
       ship = new Ship(canvas);
       return setInterval(gameLoop, 17);
-    };
-    respawn = function(options) {
-      ship.respawning = false;
-      ship.invincible = options.invincible || false;
-      if (ship.invincible) {
-        setTimeout((function() {
-          return ship.invincible = false;
-        }), 3000);
-        ship.opacity = 0.2;
-        return ship.opacityInterval = setInterval(increaseOpacity, 300);
-      }
-    };
-    increaseOpacity = function() {
-      ship.opacity += 0.08;
-      if (ship.opacity >= 1) {
-        ship.opacity = 1;
-        clearInterval(ship.opacityInterval);
-        return ship.opacityInterval = null;
-      }
     };
     gameLoop = function() {
       updateBullets();
@@ -86,11 +86,7 @@
         lives -= 1;
         ship.expired = false;
         ship.respawning = true;
-        return setTimeout((function() {
-          return respawn({
-            invincible: true
-          });
-        }), 3000);
+        return setTimeout(ship.respawn, 3000);
       } else if (ship.respawning) {
         ;
       } else {
