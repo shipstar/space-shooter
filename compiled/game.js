@@ -1,4 +1,6 @@
 (function() {
+  var Ship, bullets, canvas, context, score, ship, targets;
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   Array.prototype.remove = function(value) {
     var i;
     i = 0;
@@ -11,115 +13,127 @@
     }
     return this;
   };
-  $(function() {
-    var bullets, canvas, clearCanvas, context, drawBullets, drawShip, drawStats, drawTargets, gameLoop, generateTarget, handleKeys, increaseOpacity, init, isAlive, lives, respawn, score, ship, targets, updateBullets, updateShip, updateTargets;
-    canvas = null;
-    context = null;
-    ship = null;
-    bullets = [];
-    targets = [];
-    score = 0;
-    lives = 3;
-    init = function() {
-      canvas = $("#canvas");
-      context = canvas.get(0).getContext("2d");
-      respawn({
-        invincible: false
-      });
-      return setInterval(gameLoop, 17);
+  canvas = null;
+  context = null;
+  ship = null;
+  bullets = [];
+  targets = [];
+  score = 0;
+  Ship = (function() {
+    function Ship(canvas) {
+      this.canvas = canvas;
+      this.draw = __bind(this.draw, this);
+      this.update = __bind(this.update, this);
+      this.increaseOpacity = __bind(this.increaseOpacity, this);
+      this.respawn = __bind(this.respawn, this);
+      this.isAlive = __bind(this.isAlive, this);
+      this.init = __bind(this.init, this);
+      this.init();
+    }
+    Ship.prototype.init = function() {
+      this.width = 20;
+      this.height = 20;
+      this.x = this.canvas.width() / 2;
+      this.y = this.canvas.height() - 50;
+      this.movementInterval = 10;
+      this.firing = false;
+      this.movingLeft = false;
+      this.movingRight = false;
+      this.respawning = false;
+      this.invincible = false;
+      this.opacity = 1;
+      return this.lives = 3;
     };
-    respawn = function(options) {
-      ship = {
-        width: 20,
-        height: 20,
-        x: canvas.width() / 2,
-        y: canvas.height() - 50,
-        movementInterval: 10,
-        firing: false,
-        movingLeft: false,
-        movingRight: false,
-        respawning: false,
-        opacity: 1,
-        invincible: options.invincible || false
-      };
-      if (ship.invincible) {
-        setTimeout((function() {
-          return ship.invincible = false;
-        }), 3000);
-        ship.opacity = 0.2;
-        return ship.opacityInterval = setInterval(increaseOpacity, 300);
+    Ship.prototype.isAlive = function() {
+      return !(this.expired || this.respawning);
+    };
+    Ship.prototype.respawn = function() {
+      this.init();
+      this.respawning = false;
+      this.invincible = true;
+      this.opacity = 0.2;
+      return this.opacityInterval = setInterval(this.increaseOpacity, 300);
+    };
+    Ship.prototype.increaseOpacity = function() {
+      this.opacity += 0.08;
+      if (this.opacity >= 1) {
+        this.opacity = 1;
+        this.invincible = false;
+        clearInterval(this.opacityInterval);
+        return this.opacityInterval = null;
       }
     };
-    increaseOpacity = function() {
-      ship.opacity += 0.08;
-      if (ship.opacity >= 1) {
-        ship.opacity = 1;
-        clearInterval(ship.opacityInterval);
-        return ship.opacityInterval = null;
-      }
-    };
-    gameLoop = function() {
-      updateBullets();
-      updateTargets();
-      updateShip(ship);
-      generateTarget();
-      clearCanvas();
-      drawShip(ship);
-      drawBullets(bullets);
-      drawTargets(targets);
-      return drawStats();
-    };
-    updateShip = function(ship) {
+    Ship.prototype.update = function() {
       var bullet, myBullets;
-      if (ship.expired) {
-        lives -= 1;
-        ship.expired = false;
-        ship.respawning = true;
-        return setTimeout((function() {
-          return respawn({
-            invincible: true
-          });
-        }), 3000);
-      } else if (ship.respawning) {
-        ;
-      } else {
-        if (ship.movingLeft) {
-          if (ship.x > 0) {
-            ship.x -= ship.movementInterval;
+      if (this.isAlive()) {
+        if (this.movingLeft) {
+          if (this.x > 0) {
+            this.x -= this.movementInterval;
           }
         }
-        if (ship.movingRight) {
-          if ((ship.x + ship.width) < canvas.width()) {
-            ship.x += ship.movementInterval;
+        if (this.movingRight) {
+          if ((this.x + this.width) < this.canvas.width()) {
+            this.x += this.movementInterval;
           }
         }
-        if (ship.firing) {
+        if (this.firing) {
           myBullets = (function() {
             var _i, _len, _results;
             _results = [];
             for (_i = 0, _len = bullets.length; _i < _len; _i++) {
               bullet = bullets[_i];
-              if (!bullet.expired && bullet.owner === ship) {
+              if (!bullet.expired && bullet.owner === this) {
                 _results.push(bullet);
               }
             }
             return _results;
-          })();
+          }).call(this);
           if (myBullets.length <= 4) {
             return bullets.push({
               width: 2,
               height: 2,
-              x: ship.x + ship.width / 2,
-              y: ship.y - 1,
+              x: this.x + this.width / 2,
+              y: this.y - 1,
               velocity: -8,
-              owner: ship
+              owner: this
             });
           }
         }
+      } else if (this.expired) {
+        this.lives -= 1;
+        this.expired = false;
+        this.respawning = true;
+        return setTimeout(this.respawn, 3000);
       }
     };
-    isAlive = function(ship) {
-      return !(ship.expired || ship.respawning);
+    Ship.prototype.draw = function() {
+      if (this.isAlive()) {
+        context.globalAlpha = this.opacity;
+        context.fillRect(this.x, this.y, this.width, this.height);
+        context.fillRect(this.x + this.width / 2 - 1, this.y - 4, 2, 4);
+        return context.globalAlpha = 1;
+      }
+    };
+    return Ship;
+  })();
+  $(function() {
+    var clearCanvas, drawBullets, drawStats, drawTargets, gameLoop, generateTarget, handleKeys, init, updateBullets, updateTargets;
+    init = function() {
+      canvas = $("#canvas");
+      context = canvas.get(0).getContext("2d");
+      ship = new Ship(canvas);
+      return setInterval(gameLoop, 17);
+    };
+    gameLoop = function() {
+      updateBullets();
+      updateTargets();
+      ship.update();
+      generateTarget();
+      clearCanvas();
+      ship.draw();
+      drawBullets(bullets);
+      drawTargets(targets);
+      return drawStats();
     };
     updateTargets = function() {
       var target, _i, _len;
@@ -165,7 +179,7 @@
             target.expired = true;
             bullet.expired = true;
           }
-          if (bullet.y < ship.y + ship.height && bullet.y > ship.y && bullet.x < ship.x + ship.width && bullet.x > ship.x && isAlive(ship)) {
+          if (bullet.y < ship.y + ship.height && bullet.y > ship.y && bullet.x < ship.x + ship.width && bullet.x > ship.x && ship.isAlive()) {
             if (!ship.invincible) {
               ship.expired = true;
             }
@@ -200,15 +214,6 @@
     clearCanvas = function() {
       return context.clearRect(0, 0, canvas.width(), canvas.height());
     };
-    drawShip = function(ship) {
-      if (isAlive(ship)) {
-        context = canvas.get(0).getContext("2d");
-        context.globalAlpha = ship.opacity;
-        context.fillRect(ship.x, ship.y, ship.width, ship.height);
-        context.fillRect(ship.x + ship.width / 2 - 1, ship.y - 4, 2, 4);
-        return context.globalAlpha = 1;
-      }
-    };
     drawBullets = function(bullets) {
       var bullet, _i, _len, _results;
       _results = [];
@@ -229,7 +234,7 @@
     };
     drawStats = function() {
       $('#score').text(score);
-      return $('#lives').text(lives);
+      return $('#lives').text(ship.lives);
     };
     handleKeys = function(options) {
       return function() {
