@@ -37,4 +37,5 @@ send404 = (res) ->
   res.write '404'
   res.end()
 
-server.listen 8888
+sys.puts process.env.PORT
+server.listen port = Number(process.env.PORT || 8888)
