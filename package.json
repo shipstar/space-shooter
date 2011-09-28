@@ -3,7 +3,6 @@
 	"version":			"0.0.1",
   "dependencies": {
     "coffee-script": ">= 1.0.1",
-    "socket.io": "= 0.6.18",
     "sass": "=0.5.0",
     "haml": ">= 0.4.2"
   }
