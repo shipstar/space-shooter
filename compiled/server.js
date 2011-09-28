@@ -1,5 +1,5 @@
 (function() {
-  var fs, http, send404, server, sys, url;
+  var fs, http, port, send404, server, sys, url;
   sys = require('sys');
   http = require('http');
   fs = require('fs');
@@ -46,5 +46,6 @@
     res.write('404');
     return res.end();
   };
-  server.listen(8888);
+  sys.puts(process.env.PORT);
+  server.listen(port = Number(process.env.PORT || 8888));
 }).call(this);
