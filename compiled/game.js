@@ -29,6 +29,7 @@
       this.respawn = __bind(this.respawn, this);
       this.isAlive = __bind(this.isAlive, this);
       this.init = __bind(this.init, this);
+      this.lives = 3;
       this.init();
     }
     Ship.prototype.init = function() {
@@ -42,8 +43,7 @@
       this.movingRight = false;
       this.respawning = false;
       this.invincible = false;
-      this.opacity = 1;
-      return this.lives = 3;
+      return this.opacity = 1;
     };
     Ship.prototype.isAlive = function() {
       return !(this.expired || this.respawning);

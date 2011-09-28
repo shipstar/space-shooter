@@ -16,6 +16,7 @@ score = 0
 
 class Ship
   constructor: (@canvas) ->
+    @lives = 3
     this.init()
 
   init: =>
@@ -30,7 +31,6 @@ class Ship
     @respawning = false
     @invincible = false
     @opacity = 1
-    @lives = 3
 
   isAlive: =>
     !(@expired || @respawning)
