@@ -1,6 +1,16 @@
-= Refactor into ship object
+- Split ship into separate file
+- Refactor bullet/target objects
+- Target movement
+- Bullet momentum
+- Increase target spawn rate
+- Increase target fire rate
 - Game over screen at 0 lives
 - Add sprites
+- Multiplayer
+  - Change to horizontal alignment
+  - Client/server architecture
+- More varied enemies
+  - Reflector
 - Platform-independent forking for omniwatcher
 - Get HAML/SASS/Coffeescript integrated with Node.js (or other framework) for game
   - Make sure that files can be required
