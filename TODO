@@ -1,5 +1,7 @@
 - Split ship into separate file
-- Refactor bullet/target objects
+- Refactor bullet objects
+- Refactor target objects
+- Refactor game object
 - Target movement
 - Bullet momentum
 - Increase target spawn rate
