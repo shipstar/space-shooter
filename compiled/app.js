@@ -1,5 +1,5 @@
 (function() {
-  var Ship, bullets, canvas, context, score, ship, targets;
+  var Ship, bullets, canvas, context, level, score, ship, targets;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   canvas = null;
   context = null;
@@ -7,8 +7,9 @@
   bullets = [];
   targets = [];
   score = 0;
+  level = 1;
   $(function() {
-    var clearCanvas, drawBullets, drawStats, drawTargets, gameLoop, generateTarget, init, updateBullets, updateTargets;
+    var clearCanvas, drawBullets, drawStats, drawTargets, gameLoop, generateTarget, increaseLevel, init, updateBullets, updateTargets;
     init = function() {
       canvas = $("#canvas");
       context = canvas.get(0).getContext("2d");
@@ -19,7 +20,8 @@
       $(document).keyup(ship.handleKeys({
         down: false
       }));
-      return setInterval(gameLoop, 17);
+      setInterval(gameLoop, 17);
+      return setInterval(increaseLevel, 30000);
     };
     gameLoop = function() {
       updateBullets();
@@ -32,6 +34,9 @@
       drawTargets(targets);
       return drawStats();
     };
+    increaseLevel = function() {
+      return level += 1;
+    };
     updateTargets = function() {
       var target, _i, _len;
       for (_i = 0, _len = targets.length; _i < _len; _i++) {
@@ -39,7 +44,7 @@
         if (target.expired) {
           score += 100;
         }
-        if (Math.random() < 0.01) {
+        if (Math.random() < (0.01 * level)) {
           bullets.push({
             width: 4,
             height: 4,
@@ -98,7 +103,7 @@
     };
     generateTarget = function() {
       var targetWidth;
-      if (Math.random() < 0.01) {
+      if (Math.random() < (0.01 * level)) {
         targetWidth = 30;
         return targets.push({
           width: targetWidth,
@@ -131,7 +136,8 @@
     };
     drawStats = function() {
       $('#score').text(score);
-      return $('#lives').text(ship.lives);
+      $('#lives').text(ship.lives);
+      return $('#level').text(level);
     };
     return init();
   });
