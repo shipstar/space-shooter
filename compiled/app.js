@@ -36,6 +36,10 @@
       var target, _i, _len;
       for (_i = 0, _len = targets.length; _i < _len; _i++) {
         target = targets[_i];
+        target.x += target.velocity;
+        if (target.x < 0 || target.x + target.width > canvas.width()) {
+          target.velocity *= -1;
+        }
         if (target.expired) {
           score += 100;
         }
@@ -97,14 +101,17 @@
       })();
     };
     generateTarget = function() {
-      var targetWidth;
+      var targetSpeed, targetWidth, targetX;
       if (Math.random() < 0.01) {
         targetWidth = 30;
+        targetX = Math.random() * (canvas.width() - targetWidth);
+        targetSpeed = Math.random() * 4 + 1;
         return targets.push({
           width: targetWidth,
           height: 30,
-          x: Math.random() * (canvas.width() - targetWidth),
-          y: 30
+          x: targetX,
+          y: 30,
+          velocity: targetX < canvas.width() / 2 ? targetSpeed : -targetSpeed
         });
       }
     };

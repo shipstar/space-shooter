@@ -30,10 +30,14 @@ $ ->
 
   updateTargets = ->
     for target in targets
+      target.x += target.velocity
+      target.velocity *= -1 if target.x < 0 || target.x + target.width > canvas.width()
+
       if target.expired
         score += 100
       if Math.random() < 0.01
         bullets.push { width: 4, height: 4, x: target.x + target.width / 2 - 2, y: target.y + target.height + 1, velocity: 4, owner: target }
+      
     targets = (target for target in targets when !target.expired)
 
   updateBullets = ->
@@ -52,7 +56,16 @@ $ ->
   generateTarget = ->
     if Math.random() < 0.01
       targetWidth = 30
-      targets.push { width: targetWidth, height: 30, x: Math.random() * (canvas.width() - targetWidth), y: 30 }
+      targetX = Math.random() * (canvas.width() - targetWidth)
+      targetSpeed = Math.random() * 4 + 1
+
+      targets.push {
+        width: targetWidth,
+        height: 30,
+        x: targetX
+        y: 30,
+        velocity: if targetX < canvas.width()/2 then targetSpeed else -targetSpeed
+      }
 
   clearCanvas = ->
     context.clearRect(0, 0, canvas.width(), canvas.height())
