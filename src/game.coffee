@@ -4,6 +4,7 @@ ship = null
 bullets = []
 targets = []
 score = 0
+level = 1
 
 $ ->
   init = ->
@@ -13,6 +14,7 @@ $ ->
     $(document).keydown(ship.handleKeys(down: true))
     $(document).keyup(ship.handleKeys(down: false))
     setInterval(gameLoop, 17)
+    setInterval(increaseLevel, 30000)
 
   gameLoop = ->
     # game logic
@@ -28,6 +30,9 @@ $ ->
     drawTargets(targets)
     drawStats()
 
+  increaseLevel = ->
+    level += 1
+
   updateTargets = ->
     for target in targets
       target.x += target.velocity
@@ -35,7 +40,7 @@ $ ->
 
       if target.expired
         score += 100
-      if Math.random() < 0.01
+      if Math.random() < (0.01 * level)
         bullets.push { width: 4, height: 4, x: target.x + target.width / 2 - 2, y: target.y + target.height + 1, velocity: 4, owner: target }
       
     targets = (target for target in targets when !target.expired)
@@ -54,7 +59,7 @@ $ ->
     bullets = (bullet for bullet in bullets when !bullet.expired)
 
   generateTarget = ->
-    if Math.random() < 0.01
+    if Math.random() < (0.01 * level)
       targetWidth = 30
       targetX = Math.random() * (canvas.width() - targetWidth)
       targetSpeed = Math.random() * 4 + 1
@@ -81,5 +86,6 @@ $ ->
   drawStats = ->
     $('#score').text(score)
     $('#lives').text(ship.lives)
+    $('#level').text(level)
 
   init()
