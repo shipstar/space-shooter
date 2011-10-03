@@ -2,10 +2,10 @@
 - Refactor target objects
 - Refactor game object
 - Bullet momentum
-- Increase target spawn rate
-- Increase target fire rate
 - Game over screen at 0 lives
 - Add sprites
+- Add game states
+- Add sounds
 - Multiplayer
   - Change to horizontal alignment
   - Client/server architecture
