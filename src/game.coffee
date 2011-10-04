@@ -5,30 +5,37 @@ bullets = []
 targets = []
 score = 0
 level = 1
+paused = false
 
 $ ->
   init = ->
+    setPaused(false)
     canvas = $("#canvas")
     context = canvas.get(0).getContext("2d")
     ship = new Ship canvas
     $(document).keydown(ship.handleKeys(down: true))
     $(document).keyup(ship.handleKeys(down: false))
+    $(document).keypress((event)->
+      if event.which == 112
+        setPaused(!paused)
+    )
     setInterval(gameLoop, 17)
     setInterval(increaseLevel, 30000)
 
   gameLoop = ->
-    # game logic
-    updateBullets()
-    updateTargets()
-    ship.update()
-    generateTarget()
+    unless paused
+      # game logic
+      updateBullets()
+      updateTargets()
+      ship.update()
+      generateTarget()
 
-    # drawing loop
-    clearCanvas()
-    ship.draw()
-    drawBullets(bullets)
-    drawTargets(targets)
-    drawStats()
+      # drawing loop
+      clearCanvas()
+      ship.draw()
+      drawBullets(bullets)
+      drawTargets(targets)
+      drawStats()
 
   increaseLevel = ->
     level += 1
@@ -87,5 +94,14 @@ $ ->
     $('#score').text(score)
     $('#lives').text(ship.lives)
     $('#level').text(level)
+
+  $(window).blur(->
+    console.log('it blurred!')
+    setPaused(true)
+  )
+
+  setPaused = (p) ->
+    paused = p
+    $('#paused').toggle(paused)
 
   init()
