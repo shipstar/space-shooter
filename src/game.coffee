@@ -6,6 +6,7 @@ targets = []
 score = 0
 level = 1
 paused = false
+MAX_TARGETS = 30
 
 $ ->
   init = ->
@@ -55,7 +56,7 @@ $ ->
   updateBullets = ->
     for bullet in bullets
       bullet.y += bullet.velocity
-      bullet.expired = true if bullet.y <= 0
+      bullet.expired = true if bullet.y <= 0 || bullet.y > canvas.height()
       for target in targets
         if bullet.y < target.y + target.height && bullet.y > target.y && bullet.x < target.x + target.width && bullet.x > target.x
           target.expired = true
@@ -66,7 +67,7 @@ $ ->
     bullets = (bullet for bullet in bullets when !bullet.expired)
 
   generateTarget = ->
-    if Math.random() < (0.01 * level)
+    if Math.random() < (0.01 * level) && targets.length < MAX_TARGETS
       targetWidth = 30
       targetX = Math.random() * (canvas.width() - targetWidth)
       targetSpeed = Math.random() * 4 + 1
@@ -94,11 +95,10 @@ $ ->
     $('#score').text(score)
     $('#lives').text(ship.lives)
     $('#level').text(level)
+    $('#bullet-count').text(bullets.length)
 
-  $(window).blur(->
-    console.log('it blurred!')
+  $(window).blur ->
     setPaused(true)
-  )
 
   setPaused = (p) ->
     paused = p
