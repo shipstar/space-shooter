@@ -10,7 +10,7 @@ paused = false
 $ ->
   init = ->
     setPaused(false)
-    canvas = $("#canvas")
+    canvas = $("canvas#game")
     context = canvas.get(0).getContext("2d")
     ship = new Ship canvas
     $(document).keydown(ship.handleKeys(down: true))
@@ -103,5 +103,6 @@ $ ->
   setPaused = (p) ->
     paused = p
     $('#paused').toggle(paused)
+    $('#overlay').toggle(paused)
 
   init()

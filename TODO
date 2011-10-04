@@ -1,10 +1,10 @@
-- Refactor bullet objects
-- Refactor target objects
 - Refactor game object
+- Add game states
+- Refactor bullet object
+- Refactor target object
 - Bullet momentum
 - Game over screen at 0 lives
 - Add sprites
-- Add game states
 - Add sounds
 - Multiplayer
   - Change to horizontal alignment
