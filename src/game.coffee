@@ -8,6 +8,9 @@ level = 1
 paused = false
 MAX_TARGETS = 30
 
+startTime = new Date().getTime()
+numFrames = 0
+
 $ ->
   init = ->
     setPaused(false)
@@ -19,12 +22,16 @@ $ ->
     $(document).keypress((event)->
       if event.which == 112
         setPaused(!paused)
+      else if event.which == 100
+        $('#stats').toggle()
     )
     setInterval(gameLoop, 17)
     setInterval(increaseLevel, 30000)
 
   gameLoop = ->
     unless paused
+      calcFPS()
+
       # game logic
       updateBullets()
       updateTargets()
@@ -104,5 +111,17 @@ $ ->
     paused = p
     $('#paused').toggle(paused)
     $('#overlay').toggle(paused)
+  
+  calcFPS = ->
+    if numFrames == 30
+      endTime = new Date().getTime()
+      secondsElapsed = (endTime - startTime) / 1000.0
+
+      $('#fps').text((30/secondsElapsed).toFixed(2))
+
+      numFrames = 0
+      startTime = endTime
+    else
+      numFrames++
 
   init()

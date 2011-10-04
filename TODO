@@ -1,3 +1,6 @@
+- debug in Firefox
+- holding space bar after dying prevents you from firing
+
 - Refactor game object
 - Add game states
 - Refactor bullet object
