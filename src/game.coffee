@@ -66,10 +66,10 @@ $ ->
       bullet.y += bullet.velocity
       bullet.expired = true if bullet.y <= 0 || bullet.y > canvas.height()
       for target in targets
-        if bullet.y < target.y + target.height && bullet.y > target.y && bullet.x < target.x + target.width && bullet.x > target.x
+        if rectanglesIntersect bullet, target
           target.expired = true
           bullet.expired = true
-        if bullet.y < ship.y + ship.height && bullet.y > ship.y && bullet.x < ship.x + ship.width && bullet.x > ship.x && ship.isAlive()
+        if rectanglesIntersect(bullet, ship) && ship.isAlive()
           ship.expired = true unless ship.invincible
           bullet.expired = true
     bullets = (bullet for bullet in bullets when !bullet.expired)
