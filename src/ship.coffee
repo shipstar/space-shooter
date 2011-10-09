@@ -1,11 +1,13 @@
 class Ship
   constructor: (@canvas) ->
+    @sprite = new Image()
+    @sprite.src = "assets/galaga_ship.png"
     @lives = 3
     this.init()
 
   init: =>
-    @width = 20
-    @height = 20
+    @width = 40
+    @height = 40
     @x = @canvas.width() / 2
     @y = @canvas.height() - 50
     @movementInterval = 10
@@ -55,8 +57,9 @@ class Ship
   draw: =>
     if this.isAlive()
       context.globalAlpha = @opacity
-      context.fillRect(@x, @y, @width, @height)
-      context.fillRect(@x + @width / 2 - 1, @y - 4, 2, 4)
+      context.drawImage(
+        @sprite, @x, @y, @width, @height
+      )
       context.globalAlpha = 1
     
   handleKeys: (options) => =>

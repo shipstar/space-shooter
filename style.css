@@ -55,3 +55,8 @@ p {
 
 .red {
   background-color: red; }
+
+#assets {
+  height: 20px;
+  width: 20px;
+  display: none; }
