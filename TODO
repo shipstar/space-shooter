@@ -1,10 +1,14 @@
-- Refactor bullet/target objects
-- Target movement
+- debug in Firefox
+- holding space bar after dying prevents you from firing
+
+- Refactor game object
+- Add game states
+- Refactor bullet object
+- Refactor target object
 - Bullet momentum
-- Increase target spawn rate
-- Increase target fire rate
 - Game over screen at 0 lives
 - Add sprites
+- Add sounds
 - Multiplayer
   - Change to horizontal alignment
   - Client/server architecture

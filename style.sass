@@ -23,11 +23,31 @@ a:hover
   padding: 0
   padding-bottom: 12px
 
-#canvas
-  display: block
+#canvases
+  position: relative
   margin-left: auto
   margin-right: auto
+  width: 500px
+  height: 300px
+
+canvas
+  position: absolute
+  display: block
   border: 1px dotted #333
+
+#overlay
+  z-index: 1
+  background-color: #333
+  opacity: 0.2
+  display: none
+  width: 500px
+  height: 300px
+
+#paused
+  text-align: center
+  font-size: 24px
+  position: relative
+  top: -180px
 
 p
   text-align: center

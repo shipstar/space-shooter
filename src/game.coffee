@@ -1,125 +1,69 @@
-Array::remove = (value) ->
-  i = 0
-  while i < @length
-    if @[i] == value
-      @splice i, 1
-    else
-      ++i
-  return @
-
 canvas = null
 context = null
 ship = null
 bullets = []
 targets = []
 score = 0
+level = 1
+paused = false
+MAX_TARGETS = 30
 
-class Ship
-  constructor: (@canvas) ->
-    @lives = 3
-    this.init()
-
-  init: =>
-    @width = 20
-    @height = 20
-    @x = @canvas.width() / 2
-    @y = @canvas.height() - 50
-    @movementInterval = 10
-    @firing = false
-    @movingLeft = false
-    @movingRight = false
-    @respawning = false
-    @invincible = false
-    @opacity = 1
-
-  isAlive: =>
-    !(@expired || @respawning)
-  
-  respawn: =>
-    this.init()
-    @respawning = false
-    @invincible = true
-    
-    @opacity = 0.2
-    @opacityInterval = setInterval this.increaseOpacity, 300
-  
-  # TODO: Ties visual artifact to logical artifact. Is this acceptable?
-  increaseOpacity: =>
-    @opacity += 0.08
-    if @opacity >= 1
-      @opacity = 1
-      @invincible = false
-      clearInterval @opacityInterval
-      @opacityInterval = null
-  
-  update: =>
-    if this.isAlive()
-      if @movingLeft
-        @x -= @movementInterval if @x > 0
-      if @movingRight
-        @x += @movementInterval if (@x + @width) < @canvas.width()
-      if @firing
-        myBullets = (bullet for bullet in bullets when !bullet.expired && bullet.owner == this)
-        if myBullets.length <= 4
-          bullets.push { width: 2, height: 2, x: @x + @width / 2, y: @y - 1, velocity: -8, owner: this }
-    else if @expired
-      @lives -= 1
-      @expired = false
-      @respawning = true
-      setTimeout this.respawn, 3000
-
-  draw: =>
-    if this.isAlive()
-      context.globalAlpha = @opacity
-      context.fillRect(@x, @y, @width, @height)
-      context.fillRect(@x + @width / 2 - 1, @y - 4, 2, 4)
-      context.globalAlpha = 1
-    
-  handleKeys: (options) => =>
-    switch event.which
-      when $.ui.keyCode.LEFT
-        @movingLeft = options.down
-      when $.ui.keyCode.RIGHT
-        @movingRight = options.down
-      when $.ui.keyCode.SPACE
-        @firing = options.down
-
+startTime = new Date().getTime()
+numFrames = 0
 
 $ ->
   init = ->
-    canvas = $("#canvas")
+    setPaused(false)
+    canvas = $("canvas#game")
     context = canvas.get(0).getContext("2d")
     ship = new Ship canvas
     $(document).keydown(ship.handleKeys(down: true))
     $(document).keyup(ship.handleKeys(down: false))
+    $(document).keypress((event)->
+      if event.which == 112
+        setPaused(!paused)
+      else if event.which == 100
+        $('#stats').toggle()
+    )
     setInterval(gameLoop, 17)
+    setInterval(increaseLevel, 30000)
 
   gameLoop = ->
-    # game logic
-    updateBullets()
-    updateTargets()
-    ship.update()
-    generateTarget()
+    unless paused
+      calcFPS()
 
-    # drawing loop
-    clearCanvas()
-    ship.draw()
-    drawBullets(bullets)
-    drawTargets(targets)
-    drawStats()
+      # game logic
+      updateBullets()
+      updateTargets()
+      ship.update()
+      generateTarget()
+
+      # drawing loop
+      clearCanvas()
+      ship.draw()
+      drawBullets(bullets)
+      drawTargets(targets)
+      drawStats()
+
+  increaseLevel = ->
+    level += 1
 
   updateTargets = ->
     for target in targets
+      target.x += target.velocity
+      target.velocity *= -1 if target.x < 0 || target.x + target.width > canvas.width()
+
       if target.expired
         score += 100
-      if Math.random() < 0.01
+      if Math.random() < (0.01 * level)
         bullets.push { width: 4, height: 4, x: target.x + target.width / 2 - 2, y: target.y + target.height + 1, velocity: 4, owner: target }
+      
     targets = (target for target in targets when !target.expired)
 
   updateBullets = ->
     for bullet in bullets
       bullet.y += bullet.velocity
-      bullet.expired = true if bullet.y <= 0
+      bullet.expired = true if bullet.y <= 0 || bullet.y > canvas.height()
       for target in targets
         if bullet.y < target.y + target.height && bullet.y > target.y && bullet.x < target.x + target.width && bullet.x > target.x
           target.expired = true
@@ -130,9 +74,21 @@ $ ->
     bullets = (bullet for bullet in bullets when !bullet.expired)
 
   generateTarget = ->
-    if Math.random() < 0.01
+    if Math.random() < (0.01 * level) && targets.length < MAX_TARGETS
       targetWidth = 30
-      targets.push { width: targetWidth, height: 30, x: Math.random() * (canvas.width() - targetWidth), y: 30 }
+      targetX = Math.random() * (canvas.width() - targetWidth)
+      targetSpeed = Math.random() * 4
+      targetSprite = new Image()
+      targetSprite.src = "assets/alien-" + (parseInt((Math.random() * 3).toFixed(0)) + 1) + ".png"
+
+      targets.push {
+        width: targetWidth,
+        height: 30,
+        x: targetX
+        y: 30,
+        velocity: if targetX < canvas.width()/2 then targetSpeed else -targetSpeed,
+        sprite: targetSprite
+      }
 
   clearCanvas = ->
     context.clearRect(0, 0, canvas.width(), canvas.height())
@@ -143,10 +99,32 @@ $ ->
 
   drawTargets = (targets) ->
     for target in targets
-      canvas.get(0).getContext("2d").fillRect(target.x, target.y, target.width, target.height)
+      canvas.get(0).getContext("2d").drawImage(target.sprite, target.x, target.y, target.width, target.height)
 
   drawStats = ->
     $('#score').text(score)
     $('#lives').text(ship.lives)
+    $('#level').text(level)
+    $('#bullet-count').text(bullets.length)
+
+  $(window).blur ->
+    setPaused(true)
+
+  setPaused = (p) ->
+    paused = p
+    $('#paused').toggle(paused)
+    $('#overlay').toggle(paused)
+  
+  calcFPS = ->
+    if numFrames == 30
+      endTime = new Date().getTime()
+      secondsElapsed = (endTime - startTime) / 1000.0
+
+      $('#fps').text((30/secondsElapsed).toFixed(2))
+
+      numFrames = 0
+      startTime = endTime
+    else
+      numFrames++
 
   init()

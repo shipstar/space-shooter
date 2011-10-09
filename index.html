@@ -5,7 +5,7 @@
 		<link rel="stylesheet" href="style.css">
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js"></script>
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
-		<script type="text/javascript" src="compiled/game.js"></script>
+		<script type="text/javascript" src="compiled/app.js"></script>
 	</head>
 	<body>
 		<h1>
@@ -15,9 +15,20 @@
       <label for="score">Score: </label><span id="score">0</span>
       &mdash;
       <label for="lives">Lives: </label><span id="lives">3</span>
+      &mdash;
+      <label for="level">Level: </label><span id="level">1</span>
 		</div>
-		<canvas id="canvas" width="500" height="300">
-			Canvas not supported.
-		</canvas>
+    <div id="canvases">
+  		<canvas id="game" width="500" height="300">
+  			Canvas not supported.
+  		</canvas>
+      <div id="overlay"></div>
+      <div id="paused">Paused</div>
+    </div>
+    <div id="stats">
+      <label for="bullet-count"># of Bullets: </label><span id="bullet-count">0</span>
+      <br/>
+      <label for="fps">FPS: </label><span id="fps">60</span>
+    </div>
 	</body>
 </html>
