@@ -77,14 +77,17 @@ $ ->
     if Math.random() < (0.01 * level) && targets.length < MAX_TARGETS
       targetWidth = 30
       targetX = Math.random() * (canvas.width() - targetWidth)
-      targetSpeed = Math.random() * 4 + 1
+      targetSpeed = Math.random() * 4
+      targetSprite = new Image()
+      targetSprite.src = "assets/alien-" + (parseInt((Math.random() * 3).toFixed(0)) + 1) + ".png"
 
       targets.push {
         width: targetWidth,
         height: 30,
         x: targetX
         y: 30,
-        velocity: if targetX < canvas.width()/2 then targetSpeed else -targetSpeed
+        velocity: if targetX < canvas.width()/2 then targetSpeed else -targetSpeed,
+        sprite: targetSprite
       }
 
   clearCanvas = ->
@@ -96,7 +99,7 @@ $ ->
 
   drawTargets = (targets) ->
     for target in targets
-      canvas.get(0).getContext("2d").fillRect(target.x, target.y, target.width, target.height)
+      canvas.get(0).getContext("2d").drawImage(target.sprite, target.x, target.y, target.width, target.height)
 
   drawStats = ->
     $('#score').text(score)
