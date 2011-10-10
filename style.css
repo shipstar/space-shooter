@@ -32,7 +32,8 @@ a:hover {
 canvas {
   position: absolute;
   display: block;
-  border: 1px dotted #333333; }
+  border: 1px dotted #333333;
+  background-color: black; }
 
 #overlay {
   z-index: 1;
@@ -46,7 +47,8 @@ canvas {
   text-align: center;
   font-size: 24px;
   position: relative;
-  top: -180px; }
+  top: -180px;
+  color: white; }
 
 p {
   text-align: center;

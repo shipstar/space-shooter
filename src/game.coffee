@@ -93,14 +93,16 @@ $ ->
 
   clearCanvas = ->
     context.clearRect(0, 0, canvas.width(), canvas.height())
-
+  
   drawBullets = (bullets) ->
     for bullet in bullets
-      canvas.get(0).getContext("2d").fillRect(bullet.x, bullet.y, bullet.width, bullet.height)
+      context.fillStyle = "#ffffff"
+      context.fillRect(bullet.x, bullet.y, bullet.width, bullet.height)
+      context.fillStyle = "#000000"
 
   drawTargets = (targets) ->
     for target in targets
-      canvas.get(0).getContext("2d").drawImage(target.sprite, target.x, target.y, target.width, target.height)
+      context.drawImage(target.sprite, target.x, target.y, target.width, target.height)
 
   drawStats = ->
     $('#score').text(score)
