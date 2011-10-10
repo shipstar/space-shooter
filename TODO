@@ -3,11 +3,13 @@
 
 - Refactor game object
 - Add game states
+- Power ups
 - Refactor bullet object
 - Refactor target object
 - Bullet momentum
 - Game over screen at 0 lives
 - Animations
+- Particle effects/explosions
 - Multiplayer
   - Change to horizontal alignment
   - Client/server architecture
