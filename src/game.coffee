@@ -114,6 +114,10 @@ $ ->
     paused = p
     $('#paused').toggle(paused)
     $('#overlay').toggle(paused)
+    if paused
+      $('#bgm').get(0).pause()
+    else
+      $('#bgm').get(0).play()
   
   calcFPS = ->
     if numFrames == 30
