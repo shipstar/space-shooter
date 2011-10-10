@@ -26,13 +26,13 @@ $ ->
         $('#stats').toggle()
     )
     setInterval(gameLoop, 17)
-    setInterval(increaseLevel, 30000)
 
   gameLoop = ->
     unless paused
       calcFPS()
 
       # game logic
+      updateLevel()
       updateBullets()
       updateTargets()
       ship.update()
@@ -45,8 +45,9 @@ $ ->
       drawTargets(targets)
       drawStats()
 
-  increaseLevel = ->
-    level += 1
+  updateLevel = ->
+    if score > (Math.pow(2, level-1) * 1000)
+      level += 1
 
   updateTargets = ->
     for target in targets

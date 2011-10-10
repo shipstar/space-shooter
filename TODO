@@ -7,8 +7,7 @@
 - Refactor target object
 - Bullet momentum
 - Game over screen at 0 lives
-- Add sprites
-- Add sounds
+- Animations
 - Multiplayer
   - Change to horizontal alignment
   - Client/server architecture
