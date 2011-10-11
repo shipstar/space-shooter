@@ -3,6 +3,7 @@ context = null
 ship = null
 bullets = []
 targets = []
+powerups = []
 score = 0
 level = 1
 paused = false
@@ -35,14 +36,19 @@ $ ->
       updateLevel()
       updateBullets()
       updateTargets()
+      updatePowerups()
       ship.update()
-      generateTarget()
+
+      # create new entities
+      spawnTarget()
+      spawnPowerup()
 
       # drawing loop
       clearCanvas()
       ship.draw()
       drawBullets(bullets)
       drawTargets(targets)
+      drawPowerups(powerups)
       drawStats()
 
   updateLevel = ->
@@ -69,12 +75,31 @@ $ ->
         if rectanglesIntersect bullet, target
           target.expired = true
           bullet.expired = true
-        if rectanglesIntersect(bullet, ship) && ship.isAlive()
+      if rectanglesIntersect(bullet, ship) && ship.isAlive()
+        bullet.expired = true
+        if ship.shield > 0
+          ship.shield -= 5
+          if ship.shield < 0
+            ship.shield = 0
+          console.log(ship.shield)
+        else
           ship.expired = true unless ship.invincible
-          bullet.expired = true
     bullets = (bullet for bullet in bullets when !bullet.expired)
 
-  generateTarget = ->
+  updatePowerups = ->
+    for powerup in powerups
+      powerup.y += powerup.velocity
+      if powerup.y > canvas.height()
+        powerup.expired = true
+      if rectanglesIntersect(powerup, ship)
+        powerup.expired = true
+        if powerup.type == 'shield'
+          ship.shield = 100
+
+    powerups = (powerup for powerup in powerups when !powerup.expired)
+
+
+  spawnTarget = ->
     if Math.random() < (0.01 * level) && targets.length < MAX_TARGETS
       targetWidth = 30
       targetX = Math.random() * (canvas.width() - targetWidth)
@@ -91,6 +116,18 @@ $ ->
         sprite: targetSprite
       }
 
+  spawnPowerup = ->
+    powerupSize = 10
+    if Math.random() < 0.01
+      powerups.push {
+        type: 'shield',
+        width: powerupSize,
+        height: powerupSize,
+        x: Math.random() * (canvas.width() - powerupSize),
+        y: 30,
+        velocity: 2,
+      }
+
   clearCanvas = ->
     context.clearRect(0, 0, canvas.width(), canvas.height())
   
@@ -103,6 +140,12 @@ $ ->
   drawTargets = (targets) ->
     for target in targets
       context.drawImage(target.sprite, target.x, target.y, target.width, target.height)
+
+  drawPowerups = (powerups) ->
+    for powerup in powerups
+      context.fillStyle = "#aaaaff"
+      context.fillRect(powerup.x, powerup.y, powerup.width, powerup.height)
+      context.fillStyle = "#000000"
 
   drawStats = ->
     $('#score').text(score)

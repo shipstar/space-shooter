@@ -17,6 +17,7 @@ class Ship
     @respawning = false
     @invincible = false
     @opacity = 1
+    @shield = 100
 
   isAlive: =>
     !(@expired || @respawning)
@@ -60,6 +61,24 @@ class Ship
       context.drawImage(
         @sprite, @x, @y, @width, @height
       )
+      if @shield > 0
+        # outer circle
+        context.globalAlpha = 1
+        context.lineWidth = 2
+        context.beginPath()
+        context.strokeStyle = "#aaaaff"
+        context.arc(@x+@width/2, @y+@height/2, @width/2 + 2, 0, 2 * Math.PI, true)
+        context.closePath()
+        context.stroke()
+
+        # inner bubble
+        context.globalAlpha = (@shield / 200) + 0.5
+        context.fillStyle = "#aaaaff"
+        context.beginPath()
+        context.arc(@x+@width/2, @y+@height/2, @width/2 + 2, 0, 2 * Math.PI, true)
+        context.closePath()
+        context.fill()
+
       context.globalAlpha = 1
     
   handleKeys: (options) => =>
