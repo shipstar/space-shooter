@@ -58,6 +58,8 @@ $ ->
   updateTargets = ->
     for target in targets
       target.x += target.velocity
+      target.rotationFrame += target.rotationFactor
+      target.rotationFactor *= -1 if Math.abs(target.rotationFrame) > 64
       target.velocity *= -1 if target.x < 0 || target.x + target.width > canvas.width()
 
       if target.expired
@@ -81,7 +83,6 @@ $ ->
           ship.shield -= 5
           if ship.shield < 0
             ship.shield = 0
-          console.log(ship.shield)
         else
           ship.expired = true unless ship.invincible
     bullets = (bullet for bullet in bullets when !bullet.expired)
@@ -113,7 +114,9 @@ $ ->
         x: targetX
         y: 30,
         velocity: if targetX < canvas.width()/2 then targetSpeed else -targetSpeed,
-        sprite: targetSprite
+        sprite: targetSprite,
+        rotationFrame: 0,
+        rotationFactor: parseInt(Math.random()*10.toFixed(0)) + 1
       }
 
   spawnPowerup = ->
@@ -139,7 +142,12 @@ $ ->
 
   drawTargets = (targets) ->
     for target in targets
+      context.save()
+      context.translate(target.x+target.width/2, target.y+target.height/2)
+      context.rotate((Math.PI/16)*target.rotationFrame/64)
+      context.translate(-(target.x+target.width/2), -(target.y+target.height/2))
       context.drawImage(target.sprite, target.x, target.y, target.width, target.height)
+      context.restore()
 
   drawPowerups = (powerups) ->
     for powerup in powerups
