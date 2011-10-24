@@ -23,8 +23,11 @@ $ ->
     $(document).keypress((event)->
       if event.which == 112
         setPaused(!paused)
-      else if event.which == 100
+      if event.which == 100
         $('#stats').toggle()
+      if event.which == 122
+        console.log("firing superbomb 1")
+        ship.firingSuperbomb = true
     )
     setInterval(gameLoop, 17)
 
@@ -66,7 +69,7 @@ $ ->
         score += 100
       if Math.random() < (0.01 * level)
         bullets.push { width: 4, height: 4, x: target.x + target.width / 2 - 2, y: target.y + target.height + 1, velocity: 4, owner: target }
-      
+
     targets = (target for target in targets when !target.expired)
 
   updateBullets = ->
@@ -76,7 +79,8 @@ $ ->
       for target in targets
         if rectanglesIntersect bullet, target
           target.expired = true
-          bullet.expired = true
+          unless bullet.superbomb
+            bullet.expired = true
       if rectanglesIntersect(bullet, ship) && ship.isAlive()
         bullet.expired = true
         if ship.shield > 0
@@ -96,6 +100,8 @@ $ ->
         powerup.expired = true
         if powerup.type == 'shield'
           ship.shield = 100
+        if powerup.type == 'superbomb'
+          ship.superbombs += 1
 
     powerups = (powerup for powerup in powerups when !powerup.expired)
 
@@ -126,6 +132,17 @@ $ ->
         type: 'shield',
         width: powerupSize,
         height: powerupSize,
+        color: "#aaaaff",
+        x: Math.random() * (canvas.width() - powerupSize),
+        y: 30,
+        velocity: 2,
+      }
+    if Math.random() < 0.01
+      powerups.push {
+        type: 'superbomb',
+        width: powerupSize,
+        height: powerupSize,
+        color: "#ffaaaa",
         x: Math.random() * (canvas.width() - powerupSize),
         y: 30,
         velocity: 2,
@@ -133,7 +150,7 @@ $ ->
 
   clearCanvas = ->
     context.clearRect(0, 0, canvas.width(), canvas.height())
-  
+
   drawBullets = (bullets) ->
     for bullet in bullets
       context.fillStyle = "#ffffff"
@@ -151,7 +168,7 @@ $ ->
 
   drawPowerups = (powerups) ->
     for powerup in powerups
-      context.fillStyle = "#aaaaff"
+      context.fillStyle = powerup.color
       context.fillRect(powerup.x, powerup.y, powerup.width, powerup.height)
       context.fillStyle = "#000000"
 
@@ -160,6 +177,7 @@ $ ->
     $('#lives').text(ship.lives)
     $('#level').text(level)
     $('#bullet-count').text(bullets.length)
+    $('#superbombs').text(ship.superbombs)
 
   $(window).blur ->
     setPaused(true)
@@ -172,7 +190,7 @@ $ ->
       $('#bgm').get(0).pause()
     else
       $('#bgm').get(0).play()
-  
+
   calcFPS = ->
     if numFrames == 30
       endTime = new Date().getTime()
