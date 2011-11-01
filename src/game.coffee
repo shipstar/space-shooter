@@ -126,10 +126,7 @@ $ ->
     target.draw() for target in targets
 
   drawPowerups = (powerups) ->
-    for powerup in powerups
-      context.fillStyle = powerup.color
-      context.fillRect(powerup.x, powerup.y, powerup.width, powerup.height)
-      context.fillStyle = "#000000"
+    powerup.draw() for powerup in powerups
 
   drawStats = ->
     $('#score').text(score)

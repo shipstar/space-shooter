@@ -14,3 +14,9 @@ class Powerup
     @x = Math.random() * (canvas.width() - powerupSize)
     @y = 30
     @velocity = 2
+
+  draw: () =>
+    context.save()
+    context.fillStyle = @color
+    context.fillRect(@x, @y, @width, @height)
+    context.restore()
