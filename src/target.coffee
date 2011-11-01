@@ -16,3 +16,21 @@ class Target
     @velocity = if targetX < canvas.width()/2 then targetSpeed else -targetSpeed
     @rotationFrame = 0
     @rotationFactor = parseInt(Math.random()*10.toFixed(0)) + 1
+
+  update: =>
+    @x += @velocity
+    @rotationFrame += @rotationFactor
+    @rotationFactor *= -1 if Math.abs(@rotationFrame) > 64
+    @velocity *= -1 if @x < 0 || @x + @width > canvas.width()
+
+    if @expired
+      score += 100
+    if Math.random() < (0.01 * level)
+      bullets.push {
+        width: 4,
+        height: 4,
+        x: @x + @width / 2 - 2,
+        y: @y + @height + 1,
+        velocity: 4,
+        owner: this
+      }

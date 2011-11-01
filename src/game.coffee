@@ -63,16 +63,7 @@ $ ->
       level += 1
 
   updateTargets = ->
-    for target in targets
-      target.x += target.velocity
-      target.rotationFrame += target.rotationFactor
-      target.rotationFactor *= -1 if Math.abs(target.rotationFrame) > 64
-      target.velocity *= -1 if target.x < 0 || target.x + target.width > canvas.width()
-
-      if target.expired
-        score += 100
-      if Math.random() < (0.01 * level)
-        bullets.push { width: 4, height: 4, x: target.x + target.width / 2 - 2, y: target.y + target.height + 1, velocity: 4, owner: target }
+    target.update() for target in targets
 
     targets = (target for target in targets when !target.expired)
 
