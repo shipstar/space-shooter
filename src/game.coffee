@@ -138,13 +138,7 @@ $ ->
       context.fillStyle = "#000000"
 
   drawTargets = (targets) ->
-    for target in targets
-      context.save()
-      context.translate(target.x+target.width/2, target.y+target.height/2)
-      context.rotate((Math.PI/16)*target.rotationFrame/64)
-      context.translate(-(target.x+target.width/2), -(target.y+target.height/2))
-      context.drawImage(target.sprite, target.x, target.y, target.width, target.height)
-      context.restore()
+    target.draw() for target in targets
 
   drawPowerups = (powerups) ->
     for powerup in powerups

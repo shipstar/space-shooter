@@ -34,3 +34,11 @@ class Target
         velocity: 4,
         owner: this
       }
+
+  draw: =>
+    context.save()
+    context.translate(@x + @width/2, @y + @height/2)
+    context.rotate((Math.PI/16) * @rotationFrame/64)
+    context.translate(-(@x + @width/2), -(@y + @height/2))
+    context.drawImage(@sprite, @x, @y, @width, @height)
+    context.restore()
