@@ -23,11 +23,11 @@ $ ->
     $(document).keyup(ship.handleKeys(down: false))
     $(document).keypress((event)->
       console.log(event.which)
-      if event.which == 112
+      if event.which == 112 # p
         setPaused(!paused)
-      if event.which == 100
+      if event.which == 100 # d
         $('#stats').toggle()
-      if event.which == 122
+      if event.which == 122 # z
         ship.firingSuperbomb = true
       if event.which == 107 && debug_mode
         console.log('manually killing ship')
