@@ -108,27 +108,10 @@ $ ->
       targets.push(new Target(canvas))
 
   spawnPowerup = ->
-    powerupSize = 10
     if Math.random() < 0.01
-      powerups.push {
-        type: 'shield',
-        width: powerupSize,
-        height: powerupSize,
-        color: "#aaaaff",
-        x: Math.random() * (canvas.width() - powerupSize),
-        y: 30,
-        velocity: 2,
-      }
+      powerups.push(Powerup.spawn(canvas, 'shield'))
     if Math.random() < 0.01
-      powerups.push {
-        type: 'superbomb',
-        width: powerupSize,
-        height: powerupSize,
-        color: "#ffaaaa",
-        x: Math.random() * (canvas.width() - powerupSize),
-        y: 30,
-        velocity: 2,
-      }
+      powerups.push(Powerup.spawn(canvas, 'superbomb'))
 
   clearCanvas = ->
     context.clearRect(0, 0, canvas.width(), canvas.height())
