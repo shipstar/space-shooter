@@ -1,5 +1,7 @@
 - debug in Firefox
 
+- ensure we are on the latest version of toaster
+
 - Redeploy on Heroku
  - add fork us at blah to the index.html page
 
@@ -17,7 +19,7 @@
 
 - Game over screen at 0 lives
 
-- Animations
+- Sprite animations
 
 - Particle effects/explosions
 

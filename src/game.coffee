@@ -8,6 +8,7 @@ score = 0
 level = 1
 paused = false
 MAX_TARGETS = 30
+debug_mode = true
 
 startTime = new Date().getTime()
 numFrames = 0
@@ -21,12 +22,16 @@ $ ->
     $(document).keydown(ship.handleKeys(down: true))
     $(document).keyup(ship.handleKeys(down: false))
     $(document).keypress((event)->
+      console.log(event.which)
       if event.which == 112
         setPaused(!paused)
       if event.which == 100
         $('#stats').toggle()
       if event.which == 122
         ship.firingSuperbomb = true
+      if event.which == 107 && debug_mode
+        console.log('manually killing ship')
+        ship.expired = true
     )
     setInterval(gameLoop, 17)
 
@@ -95,7 +100,7 @@ $ ->
       powerup.y += powerup.velocity
       if powerup.y > canvas.height()
         powerup.expired = true
-      if rectanglesIntersect(powerup, ship)
+      if rectanglesIntersect(powerup, ship) && ship.isAlive()
         powerup.expired = true
         if powerup.type == 'shield'
           ship.shield = 100
