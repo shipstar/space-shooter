@@ -1,27 +1,37 @@
 - debug in Firefox
-- holding space bar after dying prevents you from firing
 
-- Refactor game object
+- Redeploy on Heroku
+ - add fork us at blah to the index.html page
+
+- Refactorings
+ - Refactor to game object
+ - Refactor bullet object
+ - Refactor target object
+
 - Add game states
+
 - Power ups
- - shield
  - more bullets
- - super bomb
-- Refactor bullet object
-- Refactor target object
+
 - Bullet momentum
+
 - Game over screen at 0 lives
+
 - Animations
+
 - Particle effects/explosions
+
 - Multiplayer
   - Change to horizontal alignment
   - Client/server architecture
+
 - More varied enemies
   - Reflector
+
 - Platform-independent forking for omniwatcher
+
 - Get HAML/SASS/Coffeescript integrated with Node.js (or other framework) for game
   - Make sure that files can be required
-- Deploy on Heroku
 
 
 Open questions:
