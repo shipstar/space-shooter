@@ -26,7 +26,6 @@ $ ->
       if event.which == 100
         $('#stats').toggle()
       if event.which == 122
-        console.log("firing superbomb 1")
         ship.firingSuperbomb = true
     )
     setInterval(gameLoop, 17)
@@ -108,22 +107,7 @@ $ ->
 
   spawnTarget = ->
     if Math.random() < (0.01 * level) && targets.length < MAX_TARGETS
-      targetWidth = 30
-      targetX = Math.random() * (canvas.width() - targetWidth)
-      targetSpeed = Math.random() * 4
-      targetSprite = new Image()
-      targetSprite.src = "assets/alien-" + (parseInt((Math.random() * 3).toFixed(0)) + 1) + ".png"
-
-      targets.push {
-        width: targetWidth,
-        height: 30,
-        x: targetX
-        y: 30,
-        velocity: if targetX < canvas.width()/2 then targetSpeed else -targetSpeed,
-        sprite: targetSprite,
-        rotationFrame: 0,
-        rotationFactor: parseInt(Math.random()*10.toFixed(0)) + 1
-      }
+      targets.push(new Target(canvas))
 
   spawnPowerup = ->
     powerupSize = 10
