@@ -62,11 +62,6 @@ $ ->
     if score > (Math.pow(2, level-1) * 1000)
       level += 1
 
-  updateTargets = ->
-    target.update() for target in targets
-
-    targets = (target for target in targets when !target.expired)
-
   updateBullets = ->
     for bullet in bullets
       bullet.y += bullet.velocity
@@ -85,6 +80,13 @@ $ ->
         else
           ship.expired = true unless ship.invincible
     bullets = (bullet for bullet in bullets when !bullet.expired)
+  
+  # updateBullets must run before this or the targets
+  # won't get killed for an extra frame. Not the end of
+  # the world, but annoying.
+  updateTargets = ->
+    target.update() for target in targets
+    targets = (target for target in targets when !target.expired)
 
   updatePowerups = ->
     for powerup in powerups
