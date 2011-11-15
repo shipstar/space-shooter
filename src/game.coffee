@@ -13,6 +13,13 @@ debug_mode = true
 startTime = new Date().getTime()
 numFrames = 0
 
+backgroundImage
+bgY = 0
+bgY2 = -600
+bgSpeed = 1
+backgroundImage = new Image();
+backgroundImage.src = 'assets/background.jpg';
+
 $ ->
   init = ->
     setPaused(false)
@@ -52,6 +59,7 @@ $ ->
 
       # drawing loop
       clearCanvas()
+      drawScrollingBackground()
       ship.draw()
       drawBullets(bullets)
       drawTargets(targets)
@@ -158,5 +166,15 @@ $ ->
       startTime = endTime
     else
       numFrames++
+
+  drawScrollingBackground = ->
+    context.drawImage(backgroundImage,0,bgY)
+    context.drawImage(backgroundImage,0,bgY2)
+    if bgY > 600
+      bgY = -600 + bgSpeed
+    if bgY2 > 600
+      bgY2 = -600 + bgSpeed
+    bgY += bgSpeed
+    bgY2 += bgSpeed
 
   init()
