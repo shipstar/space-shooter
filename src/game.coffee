@@ -4,9 +4,11 @@ ship = null
 bullets = []
 targets = []
 powerups = []
+particleSystems = []
 score = 0
 level = 1
 paused = false
+millisecondsPerFrame = 17
 MAX_TARGETS = 30
 debug_mode = true
 
@@ -36,11 +38,31 @@ $ ->
         $('#stats').toggle()
       if event.which == 122 # z
         ship.firingSuperbomb = true
-      if event.which == 107 && debug_mode
+      if event.which == 107 && debug_mode # k
         console.log('manually killing ship')
         ship.expired = true
+      if event.which == 109 # m
+        console.log("spawning particle system")
+        particles = []
+        initX = 100
+        initY = 100
+        for i in [0..9]
+          for j in [0..9]
+            particles.push(
+              velocity: { x: Math.random() * 1 - 0.5, y: Math.random() * 1 - 0.5 },
+              position: { x: initX + i, y: initY + j },
+              width: 1,
+              height: 1,
+              timeToLive: 1000 * Math.random() + 1000,
+              expired: false,
+            )
+
+        particleSystems.push(
+          expired: false,
+          particles: particles,
+        )
     )
-    setInterval(gameLoop, 17)
+    setInterval(gameLoop, millisecondsPerFrame)
 
   gameLoop = ->
     unless paused
@@ -51,6 +73,7 @@ $ ->
       updateBullets()
       updateTargets()
       updatePowerups()
+      updateParticleSystems()
       ship.update()
 
       # create new entities
@@ -62,6 +85,7 @@ $ ->
       drawScrollingBackground()
       ship.draw()
       drawBullets(bullets)
+      drawParticleSystems(particleSystems)
       drawTargets(targets)
       drawPowerups(powerups)
       drawStats()
@@ -88,7 +112,7 @@ $ ->
         else
           ship.expired = true unless ship.invincible
     bullets = (bullet for bullet in bullets when !bullet.expired)
-  
+
   # updateBullets must run before this or the targets
   # won't get killed for an extra frame. Not the end of
   # the world, but annoying.
@@ -107,9 +131,23 @@ $ ->
           ship.shield = 100
         if powerup.type == 'superbomb'
           ship.superbombs += 1
-
     powerups = (powerup for powerup in powerups when !powerup.expired)
 
+  updateParticleSystems = ->
+    for particleSystem in particleSystems
+      particleSystemCompletelyDead = true
+      for particle in particleSystem.particles
+        unless particle.expired
+          particle.timeToLive -= millisecondsPerFrame
+          if particle.timeToLive <= 0
+            particle.expired = true
+          else
+            particleSystemCompletelyDead = false
+            particle.position.x += particle.velocity.x
+            particle.position.y += particle.velocity.y
+      if particleSystemCompletelyDead
+        particleSystem.expired = true
+    particleSystems = (particleSystem for particleSystem in particleSystems when !particleSystem.expired)
 
   spawnTarget = ->
     if Math.random() < (0.01 * level) && targets.length < MAX_TARGETS
@@ -135,6 +173,15 @@ $ ->
 
   drawPowerups = (powerups) ->
     powerup.draw() for powerup in powerups
+
+  drawParticleSystems = (particleSystems) ->
+    console.dir(particleSystems.length);
+    for particleSystem in particleSystems
+      for particle in particleSystem.particles
+        unless particle.expired
+          context.fillStyle = "#339933"
+          context.fillRect(particle.position.x, particle.position.y, particle.width, particle.height)
+          context.fillStyle = "#000000"
 
   drawStats = ->
     $('#score').text(score)
