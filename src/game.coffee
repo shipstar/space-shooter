@@ -70,6 +70,26 @@ $ ->
     if score > (Math.pow(2, level-1) * 1000)
       level += 1
 
+  createParticleSystem = (systemX, systemY, color, ySpeed) ->
+    particles = []
+    ttl = 200 * Math.random() + 200
+    for i in [0..9]
+      for j in [0..9]
+        particles.push(
+          velocity: { x: Math.random() * 2 - 1, y: Math.random() * 2 + ySpeed },
+          position: { x: systemX + i * 3, y: systemY + j * 3 },
+          width: 3,
+          height: 3,
+          timeToLive: ttl,
+          originalTimeToLive: ttl,
+          expired: false,
+        )
+    particleSystems.push(
+      expired: false,
+      particles: particles,
+      color: color,
+    )
+
   updateBullets = ->
     for bullet in bullets
       bullet.y += bullet.velocity
@@ -77,24 +97,7 @@ $ ->
       for target in targets
         if rectanglesIntersect bullet, target
           target.expired = true
-
-          particles = []
-          ttl = 200 * Math.random() + 200
-          for i in [0..9]
-            for j in [0..9]
-              particles.push(
-                velocity: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 2 },
-                position: { x: target.x + i * 3, y: target.y + j * 3 },
-                width: 3,
-                height: 3,
-                timeToLive: ttl,
-                originalTimeToLive: ttl,
-                expired: false,
-              )
-          particleSystems.push(
-            expired: false,
-            particles: particles,
-          )
+          createParticleSystem(target.x, target.y, "#993333", -2)
           unless bullet.superbomb
             bullet.expired = true
       if rectanglesIntersect(bullet, ship) && ship.isAlive()
@@ -104,7 +107,10 @@ $ ->
           if ship.shield < 0
             ship.shield = 0
         else
-          ship.expired = true unless ship.invincible
+          if !ship.invincible
+            ship.expired = true
+            createParticleSystem(ship.x, ship.y, "#FFFFFF", 2)
+
     bullets = (bullet for bullet in bullets when !bullet.expired)
 
   # updateBullets must run before this or the targets
@@ -173,7 +179,7 @@ $ ->
       for particle in particleSystem.particles
         unless particle.expired
           context.globalAlpha = particle.timeToLive / particle.originalTimeToLive
-          context.fillStyle = "#993333"
+          context.fillStyle = particleSystem.color
           context.fillRect(particle.position.x, particle.position.y, particle.width, particle.height)
           context.fillStyle = "#000000"
           context.globalAlpha = 1.0
