@@ -88,3 +88,9 @@ class Ship
         @movingRight = options.down
       when $.ui.keyCode.SPACE
         @firing = options.down
+      when 90 # z
+        @firingSuperbomb = true
+      when 75 # k
+        if debug_mode
+          console.log('manually killing ship')
+          @expired = true

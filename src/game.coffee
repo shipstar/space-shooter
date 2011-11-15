@@ -35,11 +35,6 @@ $ ->
         setPaused(!paused)
       if event.which == 100 # d
         $('#stats').toggle()
-      if event.which == 122 # z
-        ship.firingSuperbomb = true
-      if event.which == 107 && debug_mode # k
-        console.log('manually killing ship')
-        ship.expired = true
       if event.which == 109 # m
         console.log("spawning particle system")
     )
