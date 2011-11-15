@@ -5,11 +5,6 @@
 - Redeploy on Heroku
  - add fork us at blah to the index.html page
 
-- Refactorings
- - Refactor to game object
- - Refactor bullet object
- - Refactor target object
-
 - Add game states
 
 - Power ups
@@ -18,8 +13,6 @@
 - Bullet momentum
 
 - Game over screen at 0 lives
-
-- Particle effects/explosions
 
 - Multiplayer
   - Change to horizontal alignment
