@@ -15,12 +15,11 @@ debug_mode = true
 startTime = new Date().getTime()
 numFrames = 0
 
-backgroundImage
 bgY = 0
-bgY2 = -600
+bgY2 = -300
 bgSpeed = 1
 backgroundImage = new Image();
-backgroundImage.src = 'assets/background.jpg';
+backgroundImage.src = 'assets/background.png';
 
 $ ->
   init = ->
@@ -216,12 +215,10 @@ $ ->
       numFrames++
 
   drawScrollingBackground = ->
-    context.drawImage(backgroundImage,0,bgY)
-    context.drawImage(backgroundImage,0,bgY2)
-    if bgY > 600
-      bgY = -600 + bgSpeed
-    if bgY2 > 600
-      bgY2 = -600 + bgSpeed
+    context.drawImage(backgroundImage,0,0,1024,768,0,bgY,500,canvas.height())
+    context.drawImage(backgroundImage,0,0,1024,768,0,bgY2,500,canvas.height())
+    bgY = -canvas.height() if bgY > canvas.height()
+    bgY2 = -canvas.height() if bgY2 > canvas.height()
     bgY += bgSpeed
     bgY2 += bgSpeed
 
