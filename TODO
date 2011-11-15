@@ -1,5 +1,3 @@
-- debug in Firefox
-
 - ensure we are on the latest version of toaster
 
 - Redeploy on Heroku
@@ -15,17 +13,17 @@
 - Game over screen at 0 lives
 
 - Multiplayer
-  - Change to horizontal alignment
-  - Client/server architecture
+ - Change to horizontal alignment
+ - Client/server architecture
 
 - More varied enemies
-  - Reflector
+ - Reflector
 
 - Platform-independent forking for omniwatcher
 
 - Get HAML/SASS/Coffeescript integrated with Node.js (or other framework) for game
-  - Make sure that files can be required
+ - Make sure that files can be required
 
 
 Open questions:
-- why does passing canvas in to ship work but passing bullets does not?
+ - why does passing canvas in to ship work but passing bullets does not?
