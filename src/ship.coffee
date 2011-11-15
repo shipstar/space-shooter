@@ -80,7 +80,7 @@ class Ship
 
       context.globalAlpha = 1
 
-  handleKeys: (options) => =>
+  handleKeys: (options) => (event) =>
     switch event.which
       when $.ui.keyCode.LEFT
         @movingLeft = options.down
