@@ -43,24 +43,6 @@ $ ->
         ship.expired = true
       if event.which == 109 # m
         console.log("spawning particle system")
-        particles = []
-        initX = 100
-        initY = 100
-        for i in [0..9]
-          for j in [0..9]
-            particles.push(
-              velocity: { x: Math.random() * 1 - 0.5, y: Math.random() * 1 - 0.5 },
-              position: { x: initX + i, y: initY + j },
-              width: 1,
-              height: 1,
-              timeToLive: 1000 * Math.random() + 1000,
-              expired: false,
-            )
-
-        particleSystems.push(
-          expired: false,
-          particles: particles,
-        )
     )
     setInterval(gameLoop, millisecondsPerFrame)
 
@@ -101,6 +83,24 @@ $ ->
       for target in targets
         if rectanglesIntersect bullet, target
           target.expired = true
+
+          particles = []
+          ttl = 200 * Math.random() + 200
+          for i in [0..9]
+            for j in [0..9]
+              particles.push(
+                velocity: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 2 },
+                position: { x: target.x + i * 3, y: target.y + j * 3 },
+                width: 3,
+                height: 3,
+                timeToLive: ttl,
+                originalTimeToLive: ttl,
+                expired: false,
+              )
+          particleSystems.push(
+            expired: false,
+            particles: particles,
+          )
           unless bullet.superbomb
             bullet.expired = true
       if rectanglesIntersect(bullet, ship) && ship.isAlive()
@@ -175,13 +175,14 @@ $ ->
     powerup.draw() for powerup in powerups
 
   drawParticleSystems = (particleSystems) ->
-    console.dir(particleSystems.length);
     for particleSystem in particleSystems
       for particle in particleSystem.particles
         unless particle.expired
-          context.fillStyle = "#339933"
+          context.globalAlpha = particle.timeToLive / particle.originalTimeToLive
+          context.fillStyle = "#993333"
           context.fillRect(particle.position.x, particle.position.y, particle.width, particle.height)
           context.fillStyle = "#000000"
+          context.globalAlpha = 1.0
 
   drawStats = ->
     $('#score').text(score)
