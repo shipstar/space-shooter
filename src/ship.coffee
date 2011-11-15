@@ -41,6 +41,11 @@ class Ship
       clearInterval @opacityInterval
       @opacityInterval = null
 
+  gameOver: =>
+    gameOver = true
+    $('#gameover').show()
+    $('#overlay').show()
+
   update: =>
     if this.isAlive()
       if @movingLeft
@@ -56,14 +61,16 @@ class Ship
         if @superbombs > 0
           bullets.push { superbomb: true, width: 60, height: 30, x: @x - 10 , y: @y - 30, velocity: -12, owner: this}
           @superbombs -= 1
-    else if @expired
+    else if @expired && !gameOver
       @lives -= 1
+      if @lives < 0
+        this.gameOver()
       @expired = false
       @respawning = true
       setTimeout this.respawn, 3000
 
   draw: =>
-    if this.isAlive()
+    if @lives >= 0 && this.isAlive()
       context.globalAlpha = @opacity
       context.drawImage(
         @sprite, @x, @y, @width, @height

@@ -8,6 +8,7 @@ particleSystems = []
 score = 0
 level = 1
 paused = false
+gameOver = false
 millisecondsPerFrame = 17
 MAX_TARGETS = 30
 debug_mode = true
@@ -150,7 +151,7 @@ $ ->
     particleSystems = (particleSystem for particleSystem in particleSystems when !particleSystem.expired)
 
   spawnTarget = ->
-    if Math.random() < (0.01 * level) && targets.length < MAX_TARGETS
+    if Math.random() < (0.01 * level) && targets.length < MAX_TARGETS && !gameOver
       targets.push(new Target(canvas))
 
   spawnPowerup = ->
