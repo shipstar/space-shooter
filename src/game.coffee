@@ -16,11 +16,13 @@ debug_mode = true
 startTime = new Date().getTime()
 numFrames = 0
 
-bgY = 0
-bgY2 = -300
-bgSpeed = 1
 backgroundImage = new Image();
 backgroundImage.src = 'assets/background.png';
+bgX = 0
+bgY = 0
+bgX2 = 0
+bgY2 = -backgroundImage.height
+bgSpeed = 1
 
 $ ->
   init = ->
@@ -217,11 +219,17 @@ $ ->
       numFrames++
 
   drawScrollingBackground = ->
-    context.drawImage(backgroundImage,0,0,1024,768,0,bgY,500,canvas.height())
-    context.drawImage(backgroundImage,0,0,1024,768,0,bgY2,500,canvas.height())
-    bgY = -canvas.height() if bgY > canvas.height()
-    bgY2 = -canvas.height() if bgY2 > canvas.height()
+    context.drawImage(backgroundImage,bgX,bgY)
+    context.drawImage(backgroundImage,bgX2,bgY2)
+    [bgX, bgY] = resetBackground(bgX, bgY) if bgY > backgroundImage.height
+    [bgX2, bgY2] = resetBackground(bgX2, bgY2) if bgY2 > backgroundImage.height
     bgY += bgSpeed
     bgY2 += bgSpeed
+
+  resetBackground = (x,y) ->
+    [
+      [-backgroundImage.width+canvas.width()..0].random(),
+      -backgroundImage.height
+    ]
 
   init()
