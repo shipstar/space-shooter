@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Generic Space Shooter</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="compiled/app.js"></script>
+  </head>
+  <body>
+    <a href="http://github.com/shipstar/space-shooter"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_green_007200.png" alt="Fork me on GitHub"></a>
+    <h1>
+      Generic Space Shooter
+    </h1>
+    <div id="scoreboard">
+      <label for="score">Score: </label><span id="score">0</span>
+      &mdash;
+      <label for="lives">Lives: </label><span id="lives">3</span>
+      &mdash;
+      <label for="level">Level: </label><span id="level">1</span>
+      <br/>
+      <label for="superbombs">Superbombs: </label><span id="superbombs">1</span>
+    </div>
+    <div id="canvases">
+      <canvas id="game" width="500" height="300">
+        Canvas not supported.
+      </canvas>
+      <div id="overlay"></div>
+      <div id="paused">Paused</div>
+      <div id="gameover">GAME OVER</div>
+    </div>
+    <div id="controls">
+      Move: left/right arrows<br/>
+      Shoot: space bar<br/>
+      Superbomb: z<br/>
+      Pause: p<br/>
+    </div>
+    <div id="stats">
+      <label for="bullet-count"># of Bullets: </label><span id="bullet-count">0</span>
+      <br/>
+      <label for="fps">FPS: </label><span id="fps">60</span>
+    </div>
+    <audio id="bgm" src="assets/fear.ogg" preload autoplay>
+      Your browser does not support the audio element.
+    </audio>
+  </body>
+</html>
